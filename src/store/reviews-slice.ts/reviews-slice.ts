@@ -1,6 +1,4 @@
 import { buildCreateSlice, asyncThunkCreator } from '@reduxjs/toolkit';
-import { showErrorMessage } from './error-slice';
-import { isAxiosNotFoundError } from '../utils';
 import { Review } from '../../types';
 import { ReviewsApi } from '../../api/reviews-api';
 import { createSelector } from 'reselect';
@@ -15,7 +13,7 @@ export type ReviewsState = {
   displayedReviewsNumber: number;
 }
 
-const initialState: ReviewsState = {
+export const defaultState: ReviewsState = {
   reviews: [],
   displayedReviewsNumber: DISPLAYED_REVIEWS_NUMBER_STEP,
 };
@@ -25,20 +23,22 @@ export const REVIEWS_SLICE_NAME = 'reviews';
 const selectStateReviews = (state: Pick<ReviewsState, 'reviews'>) => state.reviews;
 const selectStateDisplayedReviewsNumber = (state: Pick<ReviewsState, 'displayedReviewsNumber'>) => state.displayedReviewsNumber;
 
-const sortedReviews = createSelector([
-  selectStateReviews
-],
-  (reviews) => [...reviews].sort((a, b) => new Date(a.createAt).getTime() - new Date(b.createAt).getTime())
+const sortedReviews = createSelector(
+  [
+    selectStateReviews
+  ],
+  (reviews) => [...reviews].sort((a, b) => new Date(b.createAt).getTime() - new Date(a.createAt).getTime())
 );
 
-const displayedReviews = createSelector([
-  sortedReviews,
-  selectStateDisplayedReviewsNumber
-],
+const displayedReviews = createSelector(
+  [
+    sortedReviews,
+    selectStateDisplayedReviewsNumber
+  ],
   (reviews, displayedReviewsNumber) => reviews.slice(0, displayedReviewsNumber)
 );
 
-const reviewsSlice = createSliceWithThunks({
+const makeReviewsSlice = (initialState: ReviewsState) => createSliceWithThunks({
   name: REVIEWS_SLICE_NAME,
   initialState,
   selectors: {
@@ -48,7 +48,7 @@ const reviewsSlice = createSliceWithThunks({
   },
   reducers: (create) => ({
     fetchReviewsAction: create.asyncThunk<Review[], number, { extra: { reviewsApi: ReviewsApi } }>(
-      async (id, { extra: { reviewsApi }, dispatch }) => reviewsApi.getList(id).catch((err) => {
+      async (id, { extra: { reviewsApi } }) => reviewsApi.getList(id).catch((err) => {
         // if (!isAxiosNotFoundError(err)) {
         //   showErrorMessage(err, dispatch);
         // }
@@ -66,6 +66,7 @@ const reviewsSlice = createSliceWithThunks({
     ),
     resetReviews: create.reducer((state) => {
       state.reviews = [];
+      state.displayedReviewsNumber = DISPLAYED_REVIEWS_NUMBER_STEP;
     }),
     increaseDisplayedReviewsNumber: create.reducer((state) => {
       state.displayedReviewsNumber = Math.min(state.reviews.length, state.displayedReviewsNumber + DISPLAYED_REVIEWS_NUMBER_STEP);
@@ -75,6 +76,8 @@ const reviewsSlice = createSliceWithThunks({
     }),
   }),
 });
+
+const reviewsSlice = makeReviewsSlice(defaultState);
 
 export default reviewsSlice;
 

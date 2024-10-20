@@ -22,7 +22,6 @@ const orderSlice = createSliceWithThunks({
   name: ORDER_SLICE_NAME,
   initialState,
   selectors: {
-    // selectOrder: (state) => state.order,
   },
   reducers: (create) => ({
     addOrderAction: create.asyncThunk<void, OrderParams, { extra: { orderApi: OrderApi } }>(
@@ -51,7 +50,6 @@ const orderSlice = createSliceWithThunks({
 export default orderSlice;
 
 export const {
-  // selectOrder,
 } = orderSlice.selectors;
 
 export const {

@@ -3,6 +3,7 @@ import { Camera } from '../../types';
 import ModalForm from './modal-form';
 import { useAppDispatch } from '../../hooks/hooks';
 import { addOrderAction } from '../../store/order-slice.ts/order-slice';
+import { makeCameraModalTestId } from './utils';
 
 type Props = {
   camera: Camera | null;
@@ -38,7 +39,7 @@ function ModalCall({ camera, onCloseButtonClick }: Props): JSX.Element | null {
   };
 
   return (
-    <div className="modal is-active">
+    <div data-testid={makeCameraModalTestId(id)} className="modal is-active">
       <div className="modal__wrapper">
         <div
           onClick={onCloseButtonClick}

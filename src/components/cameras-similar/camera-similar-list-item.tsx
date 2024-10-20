@@ -1,19 +1,16 @@
-import { Link } from 'react-router-dom';
-import { Camera } from '../../types';
-import { AppRoute } from '../../const';
 import { MouseEventHandler } from 'react';
+import { Camera } from '../../types';
 import Rating from '../rating/rating';
+import { Link } from 'react-router-dom';
+import { AppRoute } from '../../const';
 
 type Props = {
   camera: Camera;
   onBuyButtonClick: (id: Camera['id']) => void;
 }
 
-export const makeBuyButtonTestId = (id: Camera['id']) => `camera-list-item-buy-button-${id}`;
-export const makeInfoButtonTestId = (id: Camera['id']) => `camera-info-button-${id}`;
-
-function CameraListItem({ camera, onBuyButtonClick }: Props): JSX.Element {
-  const { id, name, previewImg, previewImg2x, previewImgWebp, previewImgWebp2x, price, rating, reviewCount } = camera;
+function CameraSimilarListItem({ camera, onBuyButtonClick }: Props): JSX.Element {
+  const { id, rating, previewImg, previewImg2x, previewImgWebp, previewImgWebp2x, name, price, reviewCount } = camera;
 
   const handleBuyButtonClick: MouseEventHandler<HTMLButtonElement> = (evt) => {
     evt.preventDefault();
@@ -21,7 +18,7 @@ function CameraListItem({ camera, onBuyButtonClick }: Props): JSX.Element {
   };
 
   return (
-    <div className="product-card">
+    <div className="product-card is-active" style={{ width: '100%', margin: 0 }}>
       <div className="product-card__img">
         <picture>
           <source
@@ -45,23 +42,19 @@ function CameraListItem({ camera, onBuyButtonClick }: Props): JSX.Element {
             <span className="visually-hidden">Всего оценок:</span>{reviewCount}
           </p>
         </div>
-        <p className="product-card__title">
-          {name}
-        </p>
+        <p className="product-card__title">{name}</p>
         <p className="product-card__price">
           <span className="visually-hidden">Цена:</span>{price.toLocaleString('ru')} ₽
         </p>
       </div>
       <div className="product-card__buttons">
         <button
-          data-testid={makeBuyButtonTestId(id)}
           onClick={handleBuyButtonClick}
-          className="btn btn--purple product-card__btn"
-          type="button"
+          className="btn btn--purple product-card__btn" type="button"
         >
           Купить
         </button>
-        <Link data-testid={makeInfoButtonTestId(id)} to={`${AppRoute.Cameras}/${id}`} className="btn btn--transparent">
+        <Link to={`${AppRoute.Cameras}/${id}`} className="btn btn--transparent">
           Подробнее
         </Link>
       </div>
@@ -69,4 +62,4 @@ function CameraListItem({ camera, onBuyButtonClick }: Props): JSX.Element {
   );
 }
 
-export default CameraListItem;
+export default CameraSimilarListItem;

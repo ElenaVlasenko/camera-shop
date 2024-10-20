@@ -1,5 +1,4 @@
 import { Review } from '../../types';
-import CommentItemOfAList from './comment-item-of-a-list';
 import ReviewItemOfAList from './review-list-item';
 
 type Props = {

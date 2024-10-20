@@ -20,3 +20,5 @@ export enum ServerRoute {
 }
 
 export const DISPLAYED_REVIEWS_NUMBER_STEP = 3;
+
+export const DEFAULT_SIMILAR_COUNT = 3;

@@ -1,4 +1,4 @@
-import { Comment, Review } from '../../types';
+import { Review } from '../../types';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import Rating from '../rating/rating';

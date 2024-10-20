@@ -1,6 +1,6 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
-import { selectCameras } from '../../store/cameras-slice/cameras-slice';
+import { selectSimilar } from '../../store/cameras-slice/cameras-slice';
 import { Camera } from '../../types';
 import Header from '../../components/header/header';
 import Footer from '../../components/footer/footer';
@@ -12,6 +12,9 @@ import { MouseEventHandler, useEffect, useState } from 'react';
 import cn from 'classnames';
 import { AppRoute } from '../../const';
 import Rating from '../../components/rating/rating';
+import CamerasSimilarList from '../../components/cameras-similar/cameras-similar-list';
+import { hasId } from '../../utils';
+import ModalCall from '../../components/modal-call/modal-call';
 
 type Props = Camera;
 
@@ -29,7 +32,6 @@ const scrollToTop = (behavior: ScrollBehavior = 'auto') => {
 };
 
 function CameraPage({
-  id,
   previewImg,
   previewImg2x,
   previewImgWebp,
@@ -44,16 +46,16 @@ function CameraPage({
   type,
   description
 }: Props): JSX.Element {
-  // const { id } = useParams();
+
   const dispatch = useAppDispatch();
   const [selectedTab, setSelectedTab] = useState(Tabs.DESCRIPTION);
-  // const cameras = useAppSelector(selectCameras);
-  // const selectedCamera = cameras.find((camera) => camera.id === id);
-  // console.log('selectedCamera:', selectedCamera)
   const reviews = useAppSelector(selectDisplayedReviews);
+  const similarCameras = useAppSelector(selectSimilar);
   const reviewsNumber = useAppSelector(selectReviewsNumber);
   const displayedReviewsNumber = useAppSelector(selectDisplayedReviewsNumber);
   const isAllReviewsDisplayed = reviewsNumber <= displayedReviewsNumber;
+  const [selectedCameraId, setSelectedCameraId] = useState<Camera['id'] | null>(null);
+  const selectedCamera = selectedCameraId ? similarCameras.find(hasId(selectedCameraId)) ?? null : null;
 
   useEffect(() => {
     scrollToTop();
@@ -64,6 +66,16 @@ function CameraPage({
 
   const handleBackToTopButton: MouseEventHandler<HTMLAnchorElement> = () => {
     scrollToTop('smooth');
+  };
+
+  const openCallModal = (cameraId: Camera['id']) => {
+    setSelectedCameraId(cameraId);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeCallModal = () => {
+    setSelectedCameraId(null);
+    document.body.style.overflow = '';
   };
 
   return (
@@ -151,6 +163,8 @@ function CameraPage({
               </div>
             </section>
           </div>
+          <CamerasSimilarList similar={similarCameras} onBuyButtonClick={openCallModal} />
+          <ModalCall camera={selectedCamera} onCloseButtonClick={closeCallModal} />
           <div className="page-content__section">
             <section className="review-block">
               <div className="container">

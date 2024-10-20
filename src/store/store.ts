@@ -12,13 +12,14 @@ export const extraArgument = {
   orderApi,
 };
 
-const store = configureStore({
-  reducer: {
-    [CAMERAS_SLICE_NAME]: camerasSlice.reducer,
-    [REVIEWS_SLICE_NAME]: reviewsSlice.reducer,
-    [ORDER_SLICE_NAME]: orderSlice.reducer,
+export const reducer = {
+  [CAMERAS_SLICE_NAME]: camerasSlice.reducer,
+  [REVIEWS_SLICE_NAME]: reviewsSlice.reducer,
+  [ORDER_SLICE_NAME]: orderSlice.reducer,
+};
 
-  },
+const store = configureStore({
+  reducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       thunk: {
