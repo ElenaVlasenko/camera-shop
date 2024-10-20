@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { makeNavigationItemTestId } from './utils';
 
 type MenuPathItem = {
   name: string;
@@ -14,6 +15,7 @@ function MenuPathItem({ name, to }: MenuPathItem) {
   return (
     <li className="breadcrumbs__item">
       <Link
+        data-testid={makeNavigationItemTestId(name)}
         className="breadcrumbs__link" to={to}
       >
         {name}
@@ -25,7 +27,7 @@ function MenuPathItem({ name, to }: MenuPathItem) {
   );
 }
 
-function CatalogNavigation({ menuPath, currentItem }: Props): JSX.Element {
+function Navigation({ menuPath, currentItem }: Props): JSX.Element {
   return (
     <div className="breadcrumbs">
       <div className="container">
@@ -42,4 +44,8 @@ function CatalogNavigation({ menuPath, currentItem }: Props): JSX.Element {
   );
 }
 
-export default CatalogNavigation;
+export default Navigation;
+
+export {
+  type Props as NavigationProps
+};

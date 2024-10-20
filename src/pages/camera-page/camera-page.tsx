@@ -5,7 +5,7 @@ import { Camera } from '../../types';
 import Header from '../../components/header/header';
 import Footer from '../../components/footer/footer';
 import ReviewsList from '../../components/reviews-list/reviews-list';
-import CatalogNavigation from '../../components/catalog-navigation/catalog-navigation';
+import Navigation from '../../components/navigation/navigation';
 import ShowMoreButton from '../../components/show-more-button/show-more-button';
 import { resetDisplayedReviewsNumber, selectDisplayedReviewsNumber, selectDisplayedReviews, selectReviewsNumber } from '../../store/reviews-slice.ts/reviews-slice';
 import { MouseEventHandler, useEffect, useState } from 'react';
@@ -13,8 +13,9 @@ import cn from 'classnames';
 import { AppRoute } from '../../const';
 import Rating from '../../components/rating/rating';
 import CamerasSimilarList from '../../components/cameras-similar/cameras-similar-list';
-import { hasId } from '../../utils';
+import { hasId, scrollToTop } from '../../utils';
 import ModalCall from '../../components/modal-call/modal-call';
+import { BACK_TO_TOP_BUTTON_ID, DESCRIPTION_SECTION_ID, DESCRIPTION_BUTTON_ID, PROPERTIES_SECTION_ID, PROPERTIES_BUTTON_ID } from './utils';
 
 type Props = Camera;
 
@@ -22,14 +23,6 @@ enum Tabs {
   DESCRIPTION = 'description',
   PROPERTIES = 'properties'
 }
-
-const scrollToTop = (behavior: ScrollBehavior = 'auto') => {
-  window.scrollTo({
-    top: 0,
-    left: 0,
-    behavior
-  });
-};
 
 function CameraPage({
   previewImg,
@@ -78,12 +71,16 @@ function CameraPage({
     document.body.style.overflow = '';
   };
 
+  const makeSimilarList = () => similarCameras.length > 0 ? <CamerasSimilarList similar={similarCameras} onBuyButtonClick={openCallModal} /> : null;
+  const makeReviewList = () => reviews.length > 0 ? <ReviewsList reviews={reviews} /> : null;
+  const makeShowMoreButton = () => !isAllReviewsDisplayed ? <ShowMoreButton /> : null;
+
   return (
     <div className="wrapper">
       <Header />
       <main>
         <div className="page-content">
-          <CatalogNavigation menuPath={[{ name: 'Главная', to: '/' }, { name: 'Каталог', to: AppRoute.Main }]} currentItem={name} />
+          <Navigation menuPath={[{ name: 'Главная', to: '/' }, { name: 'Каталог', to: AppRoute.Main }]} currentItem={name} />
           <div className="page-content__section">
             <section className="product">
               <div className="container">
@@ -122,15 +119,15 @@ function CameraPage({
                   </button>
                   <div className="tabs product__tabs">
                     <div className="tabs__controls product__tabs-controls">
-                      <button onClick={() => setSelectedTab(Tabs.PROPERTIES)} className={cn('tabs__control', { 'is-active': selectedTab === Tabs.PROPERTIES })} type="button">
+                      <button data-testid={PROPERTIES_BUTTON_ID} onClick={() => setSelectedTab(Tabs.PROPERTIES)} className={cn('tabs__control', { 'is-active': selectedTab === Tabs.PROPERTIES })} type="button">
                         Характеристики
                       </button>
-                      <button onClick={() => setSelectedTab(Tabs.DESCRIPTION)} className={cn('tabs__control', { 'is-active': selectedTab === Tabs.DESCRIPTION })} type="button">
+                      <button data-testid={DESCRIPTION_BUTTON_ID} onClick={() => setSelectedTab(Tabs.DESCRIPTION)} className={cn('tabs__control', { 'is-active': selectedTab === Tabs.DESCRIPTION })} type="button">
                         Описание
                       </button>
                     </div>
                     <div className="tabs__content">
-                      <div className={cn('tabs__element', { 'is-active': selectedTab === Tabs.PROPERTIES })}>
+                      <div data-testid={PROPERTIES_SECTION_ID} className={cn('tabs__element', { 'is-active': selectedTab === Tabs.PROPERTIES })}>
                         <ul className="product__tabs-list">
                           <li className="item-list">
                             <span className="item-list__title">Артикул:</span>
@@ -150,7 +147,7 @@ function CameraPage({
                           </li>
                         </ul>
                       </div>
-                      <div className={cn('tabs__element', { 'is-active': selectedTab === Tabs.DESCRIPTION })}>
+                      <div data-testid={DESCRIPTION_SECTION_ID} className={cn('tabs__element', { 'is-active': selectedTab === Tabs.DESCRIPTION })}>
                         <div className="product__tabs-text">
                           <p>
                             {description}
@@ -163,7 +160,7 @@ function CameraPage({
               </div>
             </section>
           </div>
-          <CamerasSimilarList similar={similarCameras} onBuyButtonClick={openCallModal} />
+          {makeSimilarList()}
           <ModalCall camera={selectedCamera} onCloseButtonClick={closeCallModal} />
           <div className="page-content__section">
             <section className="review-block">
@@ -171,9 +168,9 @@ function CameraPage({
                 <div className="page-content__headed">
                   <h2 className="title title--h3">Отзывы</h2>
                 </div>
-                <ReviewsList reviews={reviews} />
+                {makeReviewList()}
                 <div className="review-block__buttons">
-                  {!isAllReviewsDisplayed ? <ShowMoreButton /> : null}
+                  {makeShowMoreButton()}
                 </div>
               </div>
             </section>
@@ -181,6 +178,7 @@ function CameraPage({
         </div>
       </main>
       <Link
+        data-testid={BACK_TO_TOP_BUTTON_ID}
         onClick={handleBackToTopButton}
         className="up-btn" to="#header"
       >

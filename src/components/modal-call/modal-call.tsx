@@ -3,7 +3,7 @@ import { Camera } from '../../types';
 import ModalForm from './modal-form';
 import { useAppDispatch } from '../../hooks/hooks';
 import { addOrderAction } from '../../store/order-slice.ts/order-slice';
-import { makeCameraModalTestId } from './utils';
+import { makeCameraModalTestId, MODAL_CLOSE_BUTTON_ID } from './utils';
 
 type Props = {
   camera: Camera | null;
@@ -15,18 +15,22 @@ function ModalCall({ camera, onCloseButtonClick }: Props): JSX.Element | null {
 
   const closeButtonRef = useRef(null);
 
-  useEffect(() => {
-    function handleEscapeKey(event: KeyboardEvent) {
-      if (event.code === 'Escape') {
-        onCloseButtonClick();
-      }
-    }
+  useEffect(
+    () => {
+      const handleEscapeKey = (event: KeyboardEvent) => {
+        if (event.code === 'Escape') {
+          onCloseButtonClick();
+        }
+      };
 
-    document.addEventListener('keydown', handleEscapeKey);
-    return () => {
-      document.removeEventListener('keydown', handleEscapeKey);
-    };
-  }, [onCloseButtonClick]);
+      document.addEventListener('keydown', handleEscapeKey);
+
+      return () => {
+        document.removeEventListener('keydown', handleEscapeKey);
+      };
+    },
+    [onCloseButtonClick]
+  );
 
   if (camera === null) {
     return null;
@@ -36,6 +40,7 @@ function ModalCall({ camera, onCloseButtonClick }: Props): JSX.Element | null {
 
   const handleFormSubmit = (tel: string) => {
     dispatch(addOrderAction({ camerasIds: [id], coupon: null, tel }));
+    onCloseButtonClick();
   };
 
   return (
@@ -80,6 +85,7 @@ function ModalCall({ camera, onCloseButtonClick }: Props): JSX.Element | null {
           </div>
           <ModalForm onSubmit={handleFormSubmit} closeButtonRef={closeButtonRef} />
           <button
+            data-testid={MODAL_CLOSE_BUTTON_ID}
             ref={closeButtonRef}
             onClick={onCloseButtonClick}
             className="cross-btn" type="button" aria-label="Закрыть попап"

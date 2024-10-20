@@ -2,6 +2,7 @@ import { Review } from '../../types';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import Rating from '../rating/rating';
+import { REVIEW_CARD_CLASS_NAME } from './utils';
 
 type Props = {
   review: Review;
@@ -11,7 +12,7 @@ function ReviewItemOfAList({ review }: Props): JSX.Element {
   const { userName, advantage, createAt, rating, disadvantage, review: comment } = review;
 
   return (
-    <li className="review-card">
+    <li className={REVIEW_CARD_CLASS_NAME}>
       <div className="review-card__head">
         <p className="title title--h4">{userName}</p>
         <time className="review-card__data" dateTime="2022-04-13">

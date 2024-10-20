@@ -1,6 +1,4 @@
 import { buildCreateSlice, asyncThunkCreator } from '@reduxjs/toolkit';
-import { showErrorMessage } from './error-slice';
-import { isAxiosNotFoundError } from '../utils';
 import { OrderParams } from '../../types';
 import { OrderApi } from '../../api/order-api';
 
@@ -12,13 +10,13 @@ export type OrderState = {
   // order: Order | null;
 }
 
-const initialState: OrderState = {
+export const defaultState: OrderState = {
   // order: null,
 };
 
 export const ORDER_SLICE_NAME = 'order';
 
-const orderSlice = createSliceWithThunks({
+export const makeOrderSlice = (initialState = defaultState) => createSliceWithThunks({
   name: ORDER_SLICE_NAME,
   initialState,
   selectors: {
@@ -47,10 +45,9 @@ const orderSlice = createSliceWithThunks({
   }),
 });
 
-export default orderSlice;
+const orderSlice = makeOrderSlice();
 
-export const {
-} = orderSlice.selectors;
+export default orderSlice;
 
 export const {
   addOrderAction

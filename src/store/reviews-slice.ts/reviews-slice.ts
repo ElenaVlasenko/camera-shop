@@ -38,7 +38,7 @@ const displayedReviews = createSelector(
   (reviews, displayedReviewsNumber) => reviews.slice(0, displayedReviewsNumber)
 );
 
-const makeReviewsSlice = (initialState: ReviewsState) => createSliceWithThunks({
+export const makeReviewsSlice = (initialState: ReviewsState) => createSliceWithThunks({
   name: REVIEWS_SLICE_NAME,
   initialState,
   selectors: {

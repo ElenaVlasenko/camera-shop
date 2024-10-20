@@ -1,6 +1,5 @@
 import { useParams } from 'react-router-dom';
 import { useEffect } from 'react';
-
 import CameraPage from './camera-page';
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
 import { fetchSimilarAction, selectCameras, selectIsCamerasLoading } from '../../store/cameras-slice/cameras-slice';

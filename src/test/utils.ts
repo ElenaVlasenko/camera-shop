@@ -1,3 +1,5 @@
+import { screen, act } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 type IntBetween = (n1: number, n2: number) => number;
 
@@ -20,4 +22,22 @@ export const makeUniqStringGenerator: MakeStrGen = (strFromNum) => {
   const getSerialNum = makeCounter(1);
 
   return (n) => strFromNum(n ?? getSerialNum());
+};
+
+export const typeTo = (testId: string) => async (text: string) => {
+  await act(
+    () => userEvent.type(
+      screen.getByTestId(testId),
+      text
+    )
+  );
+};
+
+export const clickTo = (buttonTestId: string) => async () => {
+  await act(
+    async () => {
+      const element = screen.getByTestId(buttonTestId);
+      await userEvent.click(element);
+    }
+  );
 };

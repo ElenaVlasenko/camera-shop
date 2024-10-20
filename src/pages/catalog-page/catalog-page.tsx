@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Banner from '../../components/banner/banner';
 import CatalogList from '../../components/cameras-list/cameras-list';
-import CatalogNavigation from '../../components/catalog-navigation/catalog-navigation';
+import Navigation from '../../components/navigation/navigation';
 import Footer from '../../components/footer/footer';
 import Header from '../../components/header/header';
 import ModalCall from '../../components/modal-call/modal-call';
@@ -26,13 +26,15 @@ function CatalogPage(): JSX.Element {
     document.body.style.overflow = '';
   };
 
+  const makePromoBanner = () => promo.length > 1 ? <Banner promo={promo[0]} /> : null;
+
   return (
     <div className="wrapper">
       <Header />
       <main>
-        {promo.length > 1 ? <Banner promo={promo[0]} /> : null}
+        {makePromoBanner()}
         <div className="page-content">
-          <CatalogNavigation menuPath={[{ name: 'Главная', to: '#' }]} currentItem='Каталог' />
+          <Navigation menuPath={[{ name: 'Главная', to: '#' }]} currentItem='Каталог' />
           <CatalogList cameras={cameras} onBuyButtonClick={openCallModal} />
         </div>
         <ModalCall camera={selectedCamera} onCloseButtonClick={closeCallModal} />

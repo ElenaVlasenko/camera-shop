@@ -1,5 +1,6 @@
 import cn from 'classnames';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, MouseEvent } from 'react';
+import { CUSTOM_INPUT_WRAPPER_TEST_ID, MODAL_FORM_ERROR_MESSAGE, MODAL_FORM_SUBMIT_BUTTON_ID, TEL_INPUT_ID } from './utils';
 
 const phoneRe = /^(?:\+7|8)(?:\(9\d{2}\)|9\d{2})[- ]?\d{3}[- ]?\d{2}[- ]?\d{2}$/;
 const PHONE_DIGITS_LENGTH = 9;
@@ -42,10 +43,12 @@ function ModalForm({ onSubmit, closeButtonRef }: Props): JSX.Element {
     };
   }, [setFocusedElementIndex, focusedRefIndex, closeButtonRef]);
 
-  const handleButtonClick = () => {
-    setIsValid(phoneRe.test(phone));
+  const handleButtonClick = (evt: MouseEvent) => {
+    evt.preventDefault();
+    const isTelValid = phoneRe.test(phone);
+    setIsValid(isTelValid);
 
-    if (isValid) {
+    if (isTelValid) {
       const standardPhone = phone.replaceAll('(', '').replaceAll(')', '').replaceAll('-', '').replaceAll(' ', '');
       const phoneDigits = standardPhone.slice(standardPhone.length - PHONE_DIGITS_LENGTH, standardPhone.length);
       onSubmit(`+79${phoneDigits}`);
@@ -54,7 +57,7 @@ function ModalForm({ onSubmit, closeButtonRef }: Props): JSX.Element {
 
   return (
     <>
-      <div className={cn('custom-input', 'form-review__item', { 'is-invalid': !isValid })}>
+      <div data-testid={CUSTOM_INPUT_WRAPPER_TEST_ID} className={cn('custom-input', 'form-review__item', { 'is-invalid': !isValid })}>
         <label>
           <span className="custom-input__label">
             Телефон
@@ -63,6 +66,7 @@ function ModalForm({ onSubmit, closeButtonRef }: Props): JSX.Element {
             </svg>
           </span>
           <input
+            data-testid={TEL_INPUT_ID}
             ref={inputRef}
             autoFocus
             onChange={(evt) => setPhone(evt.currentTarget.value)}
@@ -72,10 +76,11 @@ function ModalForm({ onSubmit, closeButtonRef }: Props): JSX.Element {
             required
           />
         </label>
-        <p className="custom-input__error">Нужно указать номер</p>
+        <p className="custom-input__error">{MODAL_FORM_ERROR_MESSAGE}</p>
       </div>
       <div className="modal__buttons">
         <button
+          data-testid={MODAL_FORM_SUBMIT_BUTTON_ID}
           ref={submitButtonRef}
           onClick={handleButtonClick}
           className="btn btn--purple modal__btn modal__btn--fit-width"

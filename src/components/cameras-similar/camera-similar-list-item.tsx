@@ -3,6 +3,7 @@ import { Camera } from '../../types';
 import Rating from '../rating/rating';
 import { Link } from 'react-router-dom';
 import { AppRoute } from '../../const';
+import { scrollToTop } from '../../utils';
 
 type Props = {
   camera: Camera;
@@ -54,7 +55,10 @@ function CameraSimilarListItem({ camera, onBuyButtonClick }: Props): JSX.Element
         >
           Купить
         </button>
-        <Link to={`${AppRoute.Cameras}/${id}`} className="btn btn--transparent">
+        <Link
+          onClick={() => scrollToTop()}
+          to={`${AppRoute.Cameras}/${id}`} className="btn btn--transparent"
+        >
           Подробнее
         </Link>
       </div>
