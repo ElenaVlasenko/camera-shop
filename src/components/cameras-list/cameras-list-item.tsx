@@ -3,14 +3,12 @@ import { Camera } from '../../types';
 import { AppRoute } from '../../const';
 import { MouseEventHandler } from 'react';
 import Rating from '../rating/rating';
+import { makeBuyButtonTestId, makeInfoButtonTestId } from './utils';
 
 type Props = {
   camera: Camera;
   onBuyButtonClick: (id: Camera['id']) => void;
 }
-
-export const makeBuyButtonTestId = (id: Camera['id']) => `camera-list-item-buy-button-${id}`;
-export const makeInfoButtonTestId = (id: Camera['id']) => `camera-info-button-${id}`;
 
 function CameraListItem({ camera, onBuyButtonClick }: Props): JSX.Element {
   const { id, name, previewImg, previewImg2x, previewImgWebp, previewImgWebp2x, price, rating, reviewCount } = camera;

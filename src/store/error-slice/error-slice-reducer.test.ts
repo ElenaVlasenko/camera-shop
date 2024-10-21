@@ -12,6 +12,7 @@ describe('Error slice reducer tests', () => {
 
     expect(newState.message).toBe(error);
   });
+
   it('resetErrorMessage resets error message', () => {
     const error = ('test error');
     const state: ErrorState = {

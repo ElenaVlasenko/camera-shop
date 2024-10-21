@@ -8,11 +8,11 @@ import { withHistory, withRouter, withStore } from '../../test/pages-utils';
 import CatalogPage from './catalog-page';
 import { generateCamera } from '../../test/test-data-generators';
 import { clickTo, makeList } from '../../test/utils';
-import { makeBuyButtonTestId, makeInfoButtonTestId } from '../../components/cameras-list/cameras-list-item';
 import { Camera } from '../../types';
 import { makeCameraModalTestId, MODAL_CLOSE_BUTTON_ID } from '../../components/modal-call/utils';
 import { AppRoute } from '../../const';
 import { createMemoryHistory, MemoryHistory } from 'history';
+import { makeBuyButtonTestId, makeInfoButtonTestId } from '../../components/cameras-list/utils';
 
 const createPageStore = (
   slice: typeof camerasSlice = makeCamerasSlice(defaultState),
