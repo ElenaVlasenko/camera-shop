@@ -111,7 +111,7 @@ function CameraPage({
                   <p className="product__price">
                     <span className="visually-hidden">Цена:</span>{price.toLocaleString('ru')} ₽
                   </p>
-                  <button className="btn btn--purple" type="button">
+                  <button className="btn btn--purple visually-hidden" type="button">
                     <svg width={24} height={16} aria-hidden="true">
                       <use xlinkHref="#icon-add-basket" />
                     </svg>
