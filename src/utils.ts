@@ -10,3 +10,7 @@ export const scrollToTop = (behavior: ScrollBehavior = 'auto') => {
     behavior
   });
 };
+
+const DEFAULT_ERROR_MESSAGE = 'unknown error';
+
+export const getMessage = (err?: unknown): string => err instanceof Error ? err.message || DEFAULT_ERROR_MESSAGE : DEFAULT_ERROR_MESSAGE;

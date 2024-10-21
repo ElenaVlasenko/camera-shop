@@ -3,6 +3,7 @@ import { Review } from '../../types';
 import { ReviewsApi } from '../../api/reviews-api';
 import { createSelector } from 'reselect';
 import { DISPLAYED_REVIEWS_NUMBER_STEP } from '../../const';
+import { showErrorMessage } from '../error-slice/error-slice';
 
 const createSliceWithThunks = buildCreateSlice({
   creators: { asyncThunk: asyncThunkCreator },
@@ -48,11 +49,8 @@ export const makeReviewsSlice = (initialState: ReviewsState) => createSliceWithT
   },
   reducers: (create) => ({
     fetchReviewsAction: create.asyncThunk<Review[], number, { extra: { reviewsApi: ReviewsApi } }>(
-      async (id, { extra: { reviewsApi } }) => reviewsApi.getList(id).catch((err) => {
-        // if (!isAxiosNotFoundError(err)) {
-        //   showErrorMessage(err, dispatch);
-        // }
-
+      async (id, { extra: { reviewsApi }, dispatch }) => reviewsApi.getList(id).catch((err) => {
+        showErrorMessage(err, dispatch);
         throw err;
       }),
       {

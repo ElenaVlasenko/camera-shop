@@ -17,10 +17,6 @@ function CameraPagePicker(): JSX.Element | null {
   const cameras = useAppSelector(selectCameras);
   const selectedCamera = cameras.find(hasId(id));
 
-  // const isSelectedQuestLoading = useAppSelector(selectIsQuestLoading);
-  // const isSelectedQuestNotFound = useAppSelector(selectIsQuestNotFound);
-  // const error = useAppSelector(selectErrorMessage);
-
   useEffect(
     () => {
       if (isFinite(id)) {
@@ -46,10 +42,6 @@ function CameraPagePicker(): JSX.Element | null {
   if (selectedCamera === undefined) {
     return <NotFoundPage />;
   }
-
-  // if (error) {
-  //   return <ErrorPage />;
-  // }
 
   return <CameraPage {...selectedCamera} />;
 }

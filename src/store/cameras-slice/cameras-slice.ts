@@ -1,6 +1,7 @@
 import { buildCreateSlice, asyncThunkCreator } from '@reduxjs/toolkit';
 import { Camera, Promo } from '../../types';
 import { CamerasApi } from '../../api/cameras-api';
+import { showErrorMessage } from '../error-slice/error-slice';
 
 const createSliceWithThunks = buildCreateSlice({
   creators: { asyncThunk: asyncThunkCreator },
@@ -38,8 +39,8 @@ export const makeCamerasSlice = (initialState: CamerasState) => createSliceWithT
       state.selectedCameraId = action.payload;
     }),
     fetchCamerasAction: create.asyncThunk<Camera[], undefined, { extra: { camerasApi: CamerasApi } }>(
-      async (_arg, { extra: { camerasApi } }) => camerasApi.getList().catch((err) => {
-        // showErrorMessage(err, dispatch);
+      async (_arg, { extra: { camerasApi }, dispatch }) => camerasApi.getList().catch((err) => {
+        showErrorMessage(err, dispatch);
         throw err;
       }),
       {
@@ -57,38 +58,24 @@ export const makeCamerasSlice = (initialState: CamerasState) => createSliceWithT
       }
     ),
     fetchPromoAction: create.asyncThunk<Promo[], undefined, { extra: { camerasApi: CamerasApi } }>(
-      async (_arg, { extra: { camerasApi } }) => camerasApi.getPromo().catch((err) => {
-        // showErrorMessage(err, dispatch);
+      async (_arg, { extra: { camerasApi }, dispatch }) => camerasApi.getPromo().catch((err) => {
+        showErrorMessage(err, dispatch);
         throw err;
       }),
       {
-        pending: () => {
-          // state.isCamerasLoading = true;
-        },
-        rejected: () => {
-          // state.isCamerasLoading = false;
-        },
         fulfilled: (state, action) => {
-          // state.isCamerasLoading = false;
           const { payload: promo } = action;
           state.promo = promo;
         },
       }
     ),
     fetchSimilarAction: create.asyncThunk<Camera[], number, { extra: { camerasApi: CamerasApi } }>(
-      async (id, { extra: { camerasApi } }) => camerasApi.getSimilar(id).catch((err) => {
-        // showErrorMessage(err, dispatch);
+      async (id, { extra: { camerasApi }, dispatch }) => camerasApi.getSimilar(id).catch((err) => {
+        showErrorMessage(err, dispatch);
         throw err;
       }),
       {
-        pending: () => {
-          // state.isCamerasLoading = true;
-        },
-        rejected: () => {
-          // state.isCamerasLoading = false;
-        },
         fulfilled: (state, action) => {
-          // state.isCamerasLoading = false;
           const { payload: similar } = action;
           state.similar = similar;
         },

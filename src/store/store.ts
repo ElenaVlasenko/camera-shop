@@ -5,6 +5,7 @@ import reviewsSlice, { REVIEWS_SLICE_NAME } from './reviews-slice.ts/reviews-sli
 import { reviewsApi } from '../api/reviews-api';
 import { orderApi } from '../api/order-api';
 import orderSlice, { ORDER_SLICE_NAME } from './order-slice.ts/order-slice';
+import errorSlice, { ERROR_SLICE_NAME } from './error-slice/error-slice';
 
 export const extraArgument = {
   camerasApi,
@@ -16,6 +17,7 @@ export const reducer = {
   [CAMERAS_SLICE_NAME]: camerasSlice.reducer,
   [REVIEWS_SLICE_NAME]: reviewsSlice.reducer,
   [ORDER_SLICE_NAME]: orderSlice.reducer,
+  [ERROR_SLICE_NAME]: errorSlice.reducer,
 };
 
 const store = configureStore({

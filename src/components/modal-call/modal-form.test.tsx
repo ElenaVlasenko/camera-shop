@@ -1,5 +1,4 @@
 import { render, screen, act } from '@testing-library/react';
-// import { ActionMiddleware } from '@reduxjs/toolkit';
 import { clickTo, typeTo } from '../../test/utils';
 import { CUSTOM_INPUT_WRAPPER_TEST_ID, MODAL_FORM_SUBMIT_BUTTON_ID, TEL_INPUT_ID } from './utils';
 import ModalForm from './modal-form';

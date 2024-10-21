@@ -8,11 +8,6 @@ const camerasApi = {
     return data;
   },
 
-  async getCamera(id: string) {
-    const { data } = await api.get<Camera>(`${ServerRoute.Cameras}/${id}`);
-    return data;
-  },
-
   async getPromo() {
     const { data } = await api.get<Promo[]>(ServerRoute.Promo);
     return data;
