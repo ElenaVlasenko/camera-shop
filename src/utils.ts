@@ -14,3 +14,26 @@ export const scrollToTop = (behavior: ScrollBehavior = 'auto') => {
 const DEFAULT_ERROR_MESSAGE = 'unknown error';
 
 export const getMessage = (err?: unknown): string => err instanceof Error ? err.message || DEFAULT_ERROR_MESSAGE : DEFAULT_ERROR_MESSAGE;
+
+type Throttle = <T extends (...args: unknown[]) => void>(fn: T, timeout: number) => (...args: Parameters<T>) => void;
+
+export const throttle: Throttle = (fn, timeout) => {
+  let timer: NodeJS.Timeout | null = null;
+
+  return (...args) => {
+    if (timer) {
+      return;
+    }
+
+    const timeoutFn = () => {
+      fn(...args);
+
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+    };
+
+    timer = setTimeout(timeoutFn, timeout);
+  };
+};

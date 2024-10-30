@@ -7,13 +7,13 @@ import Footer from '../../components/footer/footer';
 import ReviewsList from '../../components/reviews-list/reviews-list';
 import Navigation from '../../components/navigation/navigation';
 import ShowMoreButton from '../../components/show-more-button/show-more-button';
-import { resetDisplayedReviewsNumber, selectDisplayedReviewsNumber, selectDisplayedReviews, selectReviewsNumber } from '../../store/reviews-slice.ts/reviews-slice';
+import { resetDisplayedReviewsNumber, selectDisplayedReviewsNumber, selectDisplayedReviews, selectReviewsNumber, increaseDisplayedReviewsNumber } from '../../store/reviews-slice.ts/reviews-slice';
 import { MouseEventHandler, useEffect, useState } from 'react';
 import cn from 'classnames';
 import { AppRoute } from '../../const';
 import Rating from '../../components/rating/rating';
 import CamerasSimilarList from '../../components/cameras-similar/cameras-similar-list';
-import { hasId, scrollToTop } from '../../utils';
+import { hasId, scrollToTop, throttle } from '../../utils';
 import ModalCall from '../../components/modal-call/modal-call';
 import { BACK_TO_TOP_BUTTON_ID, DESCRIPTION_SECTION_ID, DESCRIPTION_BUTTON_ID, PROPERTIES_SECTION_ID, PROPERTIES_BUTTON_ID } from './utils';
 
@@ -50,10 +50,31 @@ function CameraPage({
   const [selectedCameraId, setSelectedCameraId] = useState<Camera['id'] | null>(null);
   const selectedCamera = selectedCameraId ? similarCameras.find(hasId(selectedCameraId)) ?? null : null;
 
+
   useEffect(() => {
     scrollToTop();
+
+    const checkPosition = () => {
+      const height = document.body.offsetHeight;
+      const screenHeight = window.innerHeight;
+      const scrolled = window.scrollY;
+      const threshold = height - screenHeight / 10;
+      const position = scrolled + screenHeight;
+
+      if (position >= threshold) {
+        dispatch(increaseDisplayedReviewsNumber());
+      }
+    };
+
+    const throttledCheckPosition = throttle(checkPosition, 250);
+
+    window.addEventListener('scroll', throttledCheckPosition);
+    window.addEventListener('resize', throttledCheckPosition);
+
     return () => {
       dispatch(resetDisplayedReviewsNumber());
+      window.removeEventListener('scroll', throttledCheckPosition);
+      window.removeEventListener('resize', throttledCheckPosition);
     };
   }, [dispatch]);
 

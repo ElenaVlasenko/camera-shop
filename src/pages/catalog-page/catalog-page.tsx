@@ -9,6 +9,7 @@ import { useAppSelector } from '../../hooks/hooks';
 import { selectCameras, selectPromo } from '../../store/cameras-slice/cameras-slice';
 import { Camera } from '../../types';
 import { hasId } from '../../utils';
+import BannerSlider from '../../components/banner/banner-slider';
 
 function CatalogPage(): JSX.Element {
   const cameras = useAppSelector(selectCameras);
@@ -26,13 +27,11 @@ function CatalogPage(): JSX.Element {
     document.body.style.overflow = '';
   };
 
-  const makePromoBanner = () => promo.length > 1 ? <Banner promo={promo[0]} /> : null;
-
   return (
     <div className="wrapper">
       <Header />
       <main>
-        {makePromoBanner()}
+        <BannerSlider promo={promo} />
         <div className="page-content">
           <Navigation menuPath={[{ name: 'Главная', to: '#' }]} currentItem='Каталог' />
           <CatalogList cameras={cameras} onBuyButtonClick={openCallModal} />
