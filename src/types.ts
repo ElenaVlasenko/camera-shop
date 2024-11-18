@@ -1,11 +1,13 @@
+import { Category, Level, Type } from './const';
+
 export type Camera = {
   id: number;
   name: string;
   vendorCode: string;
-  type: string;
-  category: string;
+  type: Type;
+  category: Category;
   description: string;
-  level: string;
+  level: Level;
   price: number;
   rating: number;
   reviewCount: number;

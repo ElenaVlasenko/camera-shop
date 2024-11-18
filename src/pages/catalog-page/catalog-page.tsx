@@ -1,18 +1,17 @@
 import { useState } from 'react';
-import Banner from '../../components/banner/banner';
 import CatalogList from '../../components/cameras-list/cameras-list';
 import Navigation from '../../components/navigation/navigation';
 import Footer from '../../components/footer/footer';
 import Header from '../../components/header/header';
 import ModalCall from '../../components/modal-call/modal-call';
 import { useAppSelector } from '../../hooks/hooks';
-import { selectCameras, selectPromo } from '../../store/cameras-slice/cameras-slice';
+import { selectDisplayedCameras, selectPromo } from '../../store/cameras-slice/cameras-slice';
 import { Camera } from '../../types';
 import { hasId } from '../../utils';
 import BannerSlider from '../../components/banner/banner-slider';
 
 function CatalogPage(): JSX.Element {
-  const cameras = useAppSelector(selectCameras);
+  const cameras = useAppSelector(selectDisplayedCameras);
   const promo = useAppSelector(selectPromo);
   const [selectedCameraId, setSelectedCameraId] = useState<Camera['id'] | null>(null);
   const selectedCamera = selectedCameraId ? cameras.find(hasId(selectedCameraId)) ?? null : null;

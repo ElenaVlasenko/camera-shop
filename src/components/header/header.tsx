@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { AppRoute } from '../../const';
+import SearchForm from '../search-form/search-form';
 
 function Header(): JSX.Element {
   return (
@@ -38,6 +39,7 @@ function Header(): JSX.Element {
             </li>
           </ul>
         </nav>
+        <SearchForm />
       </div>
     </header>
   );
