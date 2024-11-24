@@ -14,7 +14,7 @@ import {
   selectReviewsNumber,
   increaseDisplayedReviewsNumber
 } from '../../store/reviews-slice.ts/reviews-slice';
-import { MouseEventHandler, useEffect, useState } from 'react';
+import { MouseEventHandler, useCallback, useEffect, useState } from 'react';
 import cn from 'classnames';
 import { AppRoute } from '../../const';
 import Rating from '../../components/rating/rating';
@@ -62,13 +62,11 @@ function CameraPage({
   const selectedCamera = selectedCameraId ? similarCameras.find(hasId(selectedCameraId)) ?? null : null;
   const navigate = useNavigate();
 
-  const setTabSearchParameter = (key: string, value: string) => {
+  const setTabSearchParameter = useCallback((key: string, value: string) => {
     navigate(`${location.pathname}?${makeQueryParameter(key, value)}`);
-  };
+  }, [navigate, location.pathname]);
 
   useEffect(() => {
-    scrollToTop();
-
     if (!(tabNames as string[]).includes(tabSearchParams)) {
       setTabSearchParameter('tab', Tab.DESCRIPTION);
       setSelectedTab(Tab.DESCRIPTION);
@@ -96,7 +94,11 @@ function CameraPage({
       window.removeEventListener('scroll', throttledCheckPosition);
       window.removeEventListener('resize', throttledCheckPosition);
     };
-  }, [dispatch]);
+  }, [dispatch, setTabSearchParameter, tabSearchParams]);
+
+  useEffect(() => {
+    scrollToTop();
+  }, []);
 
   const handleBackToTopButton: MouseEventHandler<HTMLAnchorElement> = () => {
     scrollToTop('smooth');

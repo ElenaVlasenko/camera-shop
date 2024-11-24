@@ -10,7 +10,7 @@ import { generateCamera } from '../../test/test-data-generators';
 import { clickTo, makeList } from '../../test/utils';
 import { Camera } from '../../types';
 import { makeCameraModalTestId, MODAL_CLOSE_BUTTON_ID } from '../../components/modal-call/utils';
-import { AppRoute, CATEGORY } from '../../const';
+import { AppRoute, CATEGORY, MAX_DISPLAYED_CAMERAS_COUNT } from '../../const';
 import { createMemoryHistory, MemoryHistory } from 'history';
 import { makeBuyButtonTestId, makeInfoButtonTestId } from '../../components/cameras-list/utils';
 import { FILTER_TEST_ID } from '../../components/filters/test-ids';
@@ -68,7 +68,7 @@ const clickFilter = async (testId: string) => {
 
 describe('Catalog page tests', () => {
   it('cameras from slice state is presented on screed', () => {
-    const cameras = makeList(10, () => generateCamera());
+    const cameras = makeList(MAX_DISPLAYED_CAMERAS_COUNT, () => generateCamera());
 
     renderSut({ cameras });
 
@@ -110,7 +110,8 @@ describe('Catalog page tests', () => {
 
   it('category filter was added to url search params on category filter input click', async () => {
     const history = createMemoryHistory();
-    renderSutWithHistory({}, history);
+    const camera = generateCamera();
+    renderSutWithHistory({ cameras: [camera] }, history);
 
     await clickFilter(FILTER_TEST_ID.CATEGORY_PHOTO_INPUT);
     expect(history.location.search.includes(`category=${encodeURI(CATEGORY.PHOTO)}`)).toBe(true);

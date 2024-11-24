@@ -41,7 +41,7 @@ const URL_PARAMS = {
 } as const;
 
 type Props = {
-  onFilterChange: () => void;
+  onFilterChange: (urlParams: URLSearchParams) => void;
 }
 
 const photoOnlyTypes: Type[] = [TYPE.SNAPSHOT, TYPE.FILM];
@@ -76,8 +76,7 @@ function Filters({ onFilterChange }: Props): JSX.Element {
     setNewParamsToUrl(urlParams);
   }, [location.search, setNewParamsToUrl]);
 
-  const setUrlLevels = useCallback((newLevels: Level[]) => {
-    const urlParams = new URLSearchParams(location.search);
+  const setUrlLevels = useCallback((newLevels: Level[], urlParams = new URLSearchParams(location.search)) => {
     urlParams.delete(URL_PARAMS.LEVEL);
     new Set(newLevels).forEach((item) => urlParams.append(URL_PARAMS.LEVEL, item));
     setNewParamsToUrl(urlParams);
@@ -114,14 +113,14 @@ function Filters({ onFilterChange }: Props): JSX.Element {
 
       if (!isEmpty(urlTypes) && isEmpty(selectedTypes)) {
         dispatch(setTypes(urlTypes));
-        setUrlTypes(urlTypes);
+        setUrlTypes(urlTypes, urlParams);
       }
 
       const urlLevels = (urlParams.getAll(URL_PARAMS.LEVEL) ?? []).filter(isValidLevel);
 
       if (!isEmpty(urlLevels) && isEmpty(selectedLevels)) {
         dispatch(setLevels(urlLevels));
-        setUrlLevels(urlLevels);
+        setUrlLevels(urlLevels, urlParams);
       }
     },
     [
@@ -152,30 +151,34 @@ function Filters({ onFilterChange }: Props): JSX.Element {
     }
 
     setNewParamsToUrl(urlParams);
-    onFilterChange();
+    onFilterChange(urlParams);
   };
 
   const makeTypeOnChangeHandler = (cameraType: Type) => () => {
+    const urlParams = new URLSearchParams(location.search);
+
     if (selectedTypes.includes(cameraType)) {
       dispatch(removeType(cameraType));
-      setUrlTypes(selectedTypes.filter((item) => item !== cameraType));
-      onFilterChange();
+      setUrlTypes(selectedTypes.filter((item) => item !== cameraType), urlParams);
+      onFilterChange(urlParams);
     } else {
       dispatch(addType(cameraType));
-      setUrlTypes([...selectedTypes, cameraType]);
-      onFilterChange();
+      setUrlTypes([...selectedTypes, cameraType], urlParams);
+      onFilterChange(urlParams);
     }
   };
 
   const makeLevelOnChangeHandler = (level: Level) => () => {
+    const urlParams = new URLSearchParams(location.search);
+
     if (selectedLevels.includes(level)) {
       dispatch(removeLevel(level));
-      setUrlLevels(selectedLevels.filter((item) => item !== level));
-      onFilterChange();
+      setUrlLevels(selectedLevels.filter((item) => item !== level), urlParams);
+      onFilterChange(urlParams);
     } else {
       dispatch(addLevel(level));
-      setUrlLevels([...selectedLevels, level]);
-      onFilterChange();
+      setUrlLevels([...selectedLevels, level], urlParams);
+      onFilterChange(urlParams);
     }
   };
 
@@ -186,7 +189,7 @@ function Filters({ onFilterChange }: Props): JSX.Element {
     setMaxPriceValue('');
     setMinPriceValue('');
     dispatch(resetFilters());
-    onFilterChange();
+    onFilterChange(urlParams);
   };
 
   const updatePriceMin = (newValue: number) => {
@@ -195,7 +198,7 @@ function Filters({ onFilterChange }: Props): JSX.Element {
     dispatch(setPriceMin(newValue));
     urlParams.set(URL_PARAMS.PRICE_MIN, newValue.toString());
     setNewParamsToUrl(urlParams);
-    onFilterChange();
+    onFilterChange(urlParams);
   };
 
   const updatePriceMax = (newValue: number) => {
@@ -204,7 +207,7 @@ function Filters({ onFilterChange }: Props): JSX.Element {
     dispatch(setPriceMax(newValue));
     urlParams.set(URL_PARAMS.PRICE_MAX, newValue.toString());
     setNewParamsToUrl(urlParams);
-    onFilterChange();
+    onFilterChange(urlParams);
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps

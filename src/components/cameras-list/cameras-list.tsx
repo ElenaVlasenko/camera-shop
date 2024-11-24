@@ -33,16 +33,15 @@ function CatalogList({ onBuyButtonClick }: Props): JSX.Element {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const setUrlPage = useCallback((page: number) => {
-    const urlParams = new URLSearchParams(location.search);
+  const setUrlPage = useCallback((page: number, urlParams = new URLSearchParams(location.search)) => {
     urlParams.set(URL_PARAMS.PAGE, page.toString());
     navigate(`${location.pathname}?${urlParams.toString()}`);
   }, [navigate, location.pathname, location.search]);
 
-  const resetPagination = useCallback(() => {
+  const resetPagination = useCallback((urlParams: URLSearchParams) => {
     setCurrentPage(1);
     setDisplayedPagesStr(initialPages);
-    setUrlPage(1);
+    setUrlPage(1, urlParams);
   }, [setCurrentPage, setDisplayedPagesStr, setUrlPage, initialPages]);
 
   useEffect(() => {
@@ -53,14 +52,14 @@ function CatalogList({ onBuyButtonClick }: Props): JSX.Element {
       const page = urlPage && !isNaN(parsedUrlPage) ? parsedUrlPage : currentPage;
 
       if (urlPage === '') {
-        setUrlPage(currentPage);
+        setUrlPage(currentPage, urlParams);
       } else if (page !== currentPage) {
         const pageChunkNumbers = makeSequence(Math.ceil(displayedCameras.length / MAX_DISPLAYED_CAMERAS_COUNT));
         const pageChunks = getChunks(pageChunkNumbers, PAGINATION_PAGE_NUMBER);
         const newChunkIndex = pageChunks.findIndex((chunk) => chunk.includes(page));
 
         if (newChunkIndex === -1) {
-          resetPagination();
+          resetPagination(urlParams);
         } else {
           let pageChunk = pageChunks[newChunkIndex] ?? [1];
           if (pageChunk.length < PAGINATION_PAGE_NUMBER && Array.isArray(pageChunks[newChunkIndex - 1])) {
@@ -71,7 +70,7 @@ function CatalogList({ onBuyButtonClick }: Props): JSX.Element {
           setCurrentPage(page);
         }
       } else if (page === 1) {
-        resetPagination();
+        resetPagination(urlParams);
       }
     }
   }, [initialPages, location.search, currentPage, displayedCameras.length, resetPagination, setUrlPage]);

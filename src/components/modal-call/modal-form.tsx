@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import { useEffect, useRef, useState, MouseEvent } from 'react';
 import { CUSTOM_INPUT_WRAPPER_TEST_ID, MODAL_FORM_ERROR_MESSAGE, MODAL_FORM_SUBMIT_BUTTON_ID, TEL_INPUT_ID } from './utils';
-import { KEYCODE_TAB } from '../../const';
+import { KEYCODE_TAB, PHONE_DIGITS_LENGTH } from '../../const';
 
 const phoneRe = /^(?:\+7|8)(?:\(9\d{2}\)|9\d{2})[- ]?\d{3}[- ]?\d{2}[- ]?\d{2}$/;
 
