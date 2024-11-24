@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
 import { selectSimilar } from '../../store/cameras-slice/cameras-slice';
 import { Camera } from '../../types';
@@ -7,22 +7,30 @@ import Footer from '../../components/footer/footer';
 import ReviewsList from '../../components/reviews-list/reviews-list';
 import Navigation from '../../components/navigation/navigation';
 import ShowMoreButton from '../../components/show-more-button/show-more-button';
-import { resetDisplayedReviewsNumber, selectDisplayedReviewsNumber, selectDisplayedReviews, selectReviewsNumber, increaseDisplayedReviewsNumber } from '../../store/reviews-slice.ts/reviews-slice';
+import {
+  resetDisplayedReviewsNumber,
+  selectDisplayedReviewsNumber,
+  selectDisplayedReviews,
+  selectReviewsNumber,
+  increaseDisplayedReviewsNumber
+} from '../../store/reviews-slice.ts/reviews-slice';
 import { MouseEventHandler, useEffect, useState } from 'react';
 import cn from 'classnames';
 import { AppRoute } from '../../const';
 import Rating from '../../components/rating/rating';
 import CamerasSimilarList from '../../components/cameras-similar/cameras-similar-list';
-import { hasId, scrollToTop, throttle } from '../../utils';
+import { hasId, makeQueryParameter, scrollToTop, throttle } from '../../utils';
 import ModalCall from '../../components/modal-call/modal-call';
 import { BACK_TO_TOP_BUTTON_ID, DESCRIPTION_SECTION_ID, DESCRIPTION_BUTTON_ID, PROPERTIES_SECTION_ID, PROPERTIES_BUTTON_ID } from './utils';
 
 type Props = Camera;
 
-enum Tabs {
+enum Tab {
   DESCRIPTION = 'description',
   PROPERTIES = 'properties'
 }
+
+const tabNames = [Tab.DESCRIPTION, Tab.PROPERTIES];
 
 function CameraPage({
   previewImg,
@@ -41,7 +49,10 @@ function CameraPage({
 }: Props): JSX.Element {
 
   const dispatch = useAppDispatch();
-  const [selectedTab, setSelectedTab] = useState(Tabs.DESCRIPTION);
+  const location = useLocation();
+  const urlParams = new URLSearchParams(location.search);
+  const tabSearchParams = urlParams.get('tab') ?? '';
+  const [selectedTab, setSelectedTab] = useState(tabSearchParams === Tab.DESCRIPTION ? Tab.DESCRIPTION : Tab.PROPERTIES);
   const reviews = useAppSelector(selectDisplayedReviews);
   const similarCameras = useAppSelector(selectSimilar);
   const reviewsNumber = useAppSelector(selectReviewsNumber);
@@ -49,10 +60,19 @@ function CameraPage({
   const isAllReviewsDisplayed = reviewsNumber <= displayedReviewsNumber;
   const [selectedCameraId, setSelectedCameraId] = useState<Camera['id'] | null>(null);
   const selectedCamera = selectedCameraId ? similarCameras.find(hasId(selectedCameraId)) ?? null : null;
+  const navigate = useNavigate();
 
+  const setTabSearchParameter = (key: string, value: string) => {
+    navigate(`${location.pathname}?${makeQueryParameter(key, value)}`);
+  };
 
   useEffect(() => {
     scrollToTop();
+
+    if (!(tabNames as string[]).includes(tabSearchParams)) {
+      setTabSearchParameter('tab', Tab.DESCRIPTION);
+      setSelectedTab(Tab.DESCRIPTION);
+    }
 
     const checkPosition = () => {
       const height = document.body.offsetHeight;
@@ -140,15 +160,31 @@ function CameraPage({
                   </button>
                   <div className="tabs product__tabs">
                     <div className="tabs__controls product__tabs-controls">
-                      <button data-testid={PROPERTIES_BUTTON_ID} onClick={() => setSelectedTab(Tabs.PROPERTIES)} className={cn('tabs__control', { 'is-active': selectedTab === Tabs.PROPERTIES })} type="button">
+                      <button
+                        data-testid={PROPERTIES_BUTTON_ID}
+                        onClick={() => {
+                          navigate(`${location.pathname}?${makeQueryParameter('tab', Tab.PROPERTIES)}`);
+                          setSelectedTab(Tab.PROPERTIES);
+                        }}
+                        className={cn('tabs__control', { 'is-active': selectedTab === Tab.PROPERTIES })}
+                        type="button"
+                      >
                         Характеристики
                       </button>
-                      <button data-testid={DESCRIPTION_BUTTON_ID} onClick={() => setSelectedTab(Tabs.DESCRIPTION)} className={cn('tabs__control', { 'is-active': selectedTab === Tabs.DESCRIPTION })} type="button">
+                      <button
+                        data-testid={DESCRIPTION_BUTTON_ID}
+                        onClick={() => {
+                          navigate(`${location.pathname}?${makeQueryParameter('tab', Tab.DESCRIPTION)}`);
+                          setSelectedTab(Tab.DESCRIPTION);
+                        }}
+                        className={cn('tabs__control', { 'is-active': selectedTab === Tab.DESCRIPTION })}
+                        type="button"
+                      >
                         Описание
                       </button>
                     </div>
                     <div className="tabs__content">
-                      <div data-testid={PROPERTIES_SECTION_ID} className={cn('tabs__element', { 'is-active': selectedTab === Tabs.PROPERTIES })}>
+                      <div data-testid={PROPERTIES_SECTION_ID} className={cn('tabs__element', { 'is-active': selectedTab === Tab.PROPERTIES })}>
                         <ul className="product__tabs-list">
                           <li className="item-list">
                             <span className="item-list__title">Артикул:</span>
@@ -168,7 +204,7 @@ function CameraPage({
                           </li>
                         </ul>
                       </div>
-                      <div data-testid={DESCRIPTION_SECTION_ID} className={cn('tabs__element', { 'is-active': selectedTab === Tabs.DESCRIPTION })}>
+                      <div data-testid={DESCRIPTION_SECTION_ID} className={cn('tabs__element', { 'is-active': selectedTab === Tab.DESCRIPTION })}>
                         <div className="product__tabs-text">
                           <p>
                             {description}

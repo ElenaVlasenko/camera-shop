@@ -121,6 +121,8 @@ export const makeCamerasSlice = (initialState: CamerasState) => createSliceWithT
     selectIsCamerasLoading: (state) => state.isCamerasLoading,
     selectPromo: (state) => state.promo,
     selectSimilar: (state) => state.similar,
+    selectSortingOrder: (state) => state.sortingOrder,
+    selectSortingKey: (state) => state.sortingKey,
     selectFilteredCamerasBySearchText: filteredCamerasBySearchText,
     selectSearchText: getSearchText,
     selectDisplayedCameras: getDisplayedCameras,
@@ -148,20 +150,26 @@ export const makeCamerasSlice = (initialState: CamerasState) => createSliceWithT
       state.category = action.payload;
 
       if (action.payload === CATEGORY.VIDEO) {
-        state.types = state.types.filter((cameraType) => ![TYPE.FILM, TYPE.SNAPSHOT].includes(cameraType));
+        state.types = state.types.filter((cameraType) => !([TYPE.FILM, TYPE.SNAPSHOT] as Type[]).includes(cameraType));
       }
     }),
     resetCategory: create.reducer((state) => {
       state.category = null;
     }),
-    setType: create.reducer<Type>((state, action) => {
-      state.types = [...state.types, action.payload];
+    addType: create.reducer<Type>((state, action) => {
+      state.types = [...new Set([...state.types, action.payload])];
     }),
     removeType: create.reducer<Type>((state, action) => {
       state.types = state.types.filter((cameraType) => cameraType !== action.payload);
     }),
-    setLevel: create.reducer<Level>((state, action) => {
-      state.levels = [...state.levels, action.payload];
+    setTypes: create.reducer<Type[]>((state, action) => {
+      state.types = [...new Set(action.payload)];
+    }),
+    addLevel: create.reducer<Level>((state, action) => {
+      state.levels = [...new Set([...state.levels, action.payload])];
+    }),
+    setLevels: create.reducer<Level[]>((state, action) => {
+      state.levels = [...new Set(action.payload)];
     }),
     removeLevel: create.reducer<Level>((state, action) => {
       state.levels = state.levels.filter((level) => level !== action.payload);
@@ -251,11 +259,12 @@ export const {
   selectTypes,
   selectLevels,
   selectPriceMin,
-  selectPriceMax
+  selectPriceMax,
+  selectSortingOrder,
+  selectSortingKey
 } = camerasSlice.selectors;
 
 export const {
-
   fetchCamerasAction,
   setSelectedCameraId,
   fetchPromoAction,
@@ -265,8 +274,8 @@ export const {
   setSortingKey,
   setSortingOrder,
   setCategory,
-  setType,
-  setLevel,
+  addType,
+  addLevel,
   resetFilters,
   removeType,
   resetCategory,
@@ -274,5 +283,7 @@ export const {
   setPriceMax,
   setPriceMin,
   resetPriceMax,
-  resetPriceMin
+  resetPriceMin,
+  setTypes,
+  setLevels
 } = camerasSlice.actions;

@@ -33,7 +33,7 @@ function CatalogPage(): JSX.Element {
         <BannerSlider promo={promo} />
         <div className="page-content">
           <Navigation menuPath={[{ name: 'Главная', to: '#' }]} currentItem='Каталог' />
-          <CatalogList cameras={cameras} onBuyButtonClick={openCallModal} />
+          <CatalogList onBuyButtonClick={openCallModal} />
         </div>
         <ModalCall camera={selectedCamera} onCloseButtonClick={closeCallModal} />
       </main>

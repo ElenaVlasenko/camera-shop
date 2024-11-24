@@ -10,6 +10,9 @@ export const intBetween: IntBetween = (n1, n2) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
+export const getRandomArrayElement = <T>(list: T[]) => list[intBetween(0, list.length - 1)];
+export const idsOf = <T extends { id: number }>(list: T[]): number[] => list.map((it) => it.id);
+
 type MakeCounter = (start?: number) => () => number;
 
 export const makeCounter: MakeCounter = (num = 0) => () => num++;

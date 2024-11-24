@@ -50,7 +50,7 @@ export const TYPE = {
   SNAPSHOT: 'Моментальная',
   DIGITAL: 'Цифровая',
   FILM: 'Плёночная'
-};
+} as const;
 
 export type Type = typeof TYPE[keyof typeof TYPE];
 
@@ -58,6 +58,9 @@ export const LEVEL = {
   ZERO: 'Нулевой',
   NON_PROFESSIONAL: 'Любительский',
   PROFESSIONAL: 'Профессиональный',
-};
+} as const;
 
 export type Level = typeof LEVEL[keyof typeof LEVEL];
+
+export const MAX_DISPLAYED_CAMERAS_COUNT = 9;
+export const PAGINATION_PAGE_NUMBER = 3;

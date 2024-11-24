@@ -3,6 +3,23 @@ import { Camera } from './types';
 export const hasId = (id?: Camera['id']) => (camera: Camera) => id === camera.id;
 export const isEmpty = <T>(list: T[]) => list.length === 0;
 
+export const getChunks = <T>(list: T[], size: number) => list.reduce<T[][]>(
+  (res, item) => {
+    if (res.at(-1) === undefined || res.at(-1)?.length === size) {
+      res.push([]);
+    }
+
+    res.at(-1)?.push(item);
+
+    return res;
+  },
+  []
+);
+
+export const hasEqualItems = <T extends string>(list1: T[], list2: T[]): boolean =>
+  list1.length === list2.length
+  && list1.every((item) => list2.includes(item));
+
 export const scrollToTop = (behavior: ScrollBehavior = 'auto') => {
   window.scrollTo({
     top: 0,
@@ -56,4 +73,11 @@ export const debounce: Debounce = (fn, timeout = 300) => {
       timeout
     );
   };
+};
+
+export const makeQueryParameter = (key: string, ...values: string[]): string => {
+  const params = new URLSearchParams();
+  values.forEach((val) => params.append(key, val));
+
+  return params.toString();
 };

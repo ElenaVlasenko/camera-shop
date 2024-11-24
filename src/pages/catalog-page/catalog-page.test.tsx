@@ -10,9 +10,10 @@ import { generateCamera } from '../../test/test-data-generators';
 import { clickTo, makeList } from '../../test/utils';
 import { Camera } from '../../types';
 import { makeCameraModalTestId, MODAL_CLOSE_BUTTON_ID } from '../../components/modal-call/utils';
-import { AppRoute } from '../../const';
+import { AppRoute, CATEGORY } from '../../const';
 import { createMemoryHistory, MemoryHistory } from 'history';
 import { makeBuyButtonTestId, makeInfoButtonTestId } from '../../components/cameras-list/utils';
+import { FILTER_TEST_ID } from '../../components/filters/test-ids';
 
 const createPageStore = (
   slice: typeof camerasSlice = makeCamerasSlice(defaultState),
@@ -59,6 +60,11 @@ const clickProductButton = async (cameraId: Camera['id']) => {
   await act(() => userEvent.click(buyButton));
 };
 
+const clickFilter = async (testId: string) => {
+  const buyButton = screen.getByTestId(testId);
+  await act(() => userEvent.click(buyButton));
+};
+
 
 describe('Catalog page tests', () => {
   it('cameras from slice state is presented on screed', () => {
@@ -100,5 +106,13 @@ describe('Catalog page tests', () => {
     await clickProductButton(camera.id);
 
     expect(history.location.pathname).toBe(`${AppRoute.Cameras}/${camera.id}`);
+  });
+
+  it('category filter was added to url search params on category filter input click', async () => {
+    const history = createMemoryHistory();
+    renderSutWithHistory({}, history);
+
+    await clickFilter(FILTER_TEST_ID.CATEGORY_PHOTO_INPUT);
+    expect(history.location.search.includes(`category=${encodeURI(CATEGORY.PHOTO)}`)).toBe(true);
   });
 });
