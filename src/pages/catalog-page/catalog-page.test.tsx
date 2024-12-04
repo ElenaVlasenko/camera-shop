@@ -10,10 +10,10 @@ import { generateCamera } from '../../test/test-data-generators';
 import { clickTo, makeList } from '../../test/utils';
 import { Camera } from '../../types';
 import { makeCameraModalTestId, MODAL_CLOSE_BUTTON_ID } from '../../components/modal-call/utils';
-import { AppRoute, CATEGORY, MAX_DISPLAYED_CAMERAS_COUNT } from '../../const';
+import { AppRoute, CATEGORY, LEVEL, MAX_DISPLAYED_CAMERAS_COUNT, TYPE } from '../../const';
 import { createMemoryHistory, MemoryHistory } from 'history';
 import { makeBuyButtonTestId, makeInfoButtonTestId } from '../../components/cameras-list/utils';
-import { FILTER_TEST_ID } from '../../components/filters/test-ids';
+import { CATEGORY_FILTER_TEST_ID, LEVEL_FILTER_TEST_ID, TYPE_FILTER_TEST_ID } from '../../components/filters/test-ids';
 
 const createPageStore = (
   slice: typeof camerasSlice = makeCamerasSlice(defaultState),
@@ -61,8 +61,8 @@ const clickProductButton = async (cameraId: Camera['id']) => {
 };
 
 const clickFilter = async (testId: string) => {
-  const buyButton = screen.getByTestId(testId);
-  await act(() => userEvent.click(buyButton));
+  const element = screen.getByTestId(testId);
+  await act(() => userEvent.click(element));
 };
 
 
@@ -110,10 +110,48 @@ describe('Catalog page tests', () => {
 
   it('category filter was added to url search params on category filter input click', async () => {
     const history = createMemoryHistory();
-    const camera = generateCamera();
-    renderSutWithHistory({ cameras: [camera] }, history);
+    renderSutWithHistory({}, history);
 
-    await clickFilter(FILTER_TEST_ID.CATEGORY_PHOTO_INPUT);
+    await clickFilter(CATEGORY_FILTER_TEST_ID.CATEGORY_PHOTO_INPUT);
     expect(history.location.search.includes(`category=${encodeURI(CATEGORY.PHOTO)}`)).toBe(true);
+  });
+
+  it('type filter was added to url search params on type filter input click', async () => {
+    const history = createMemoryHistory();
+    renderSutWithHistory({}, history);
+
+    await clickFilter(TYPE_FILTER_TEST_ID.COLLECTION);
+    await clickFilter(TYPE_FILTER_TEST_ID.DIGITAL);
+
+    [TYPE.COLLECTION, TYPE.DIGITAL].forEach((cameraType) => {
+      expect(history.location.search.includes(`type=${encodeURI(cameraType)}`)).toBe(true);
+    });
+  });
+
+  it('level filter was added to url search params on level filter input click', async () => {
+    const history = createMemoryHistory();
+    renderSutWithHistory({}, history);
+
+    await clickFilter(LEVEL_FILTER_TEST_ID.LEVEL_ZERO_INPUT);
+    await clickFilter(LEVEL_FILTER_TEST_ID.LEVEL_ZERO_NON_PROFESSIONAL);
+
+    [LEVEL.NON_PROFESSIONAL, LEVEL.ZERO].forEach((level) => {
+      expect(history.location.search.includes(`level=${encodeURI(level)}`)).toBe(true);
+    });
+  });
+
+  it('filters were reset and url has no search params after reset filters button click', async () => {
+    const history = createMemoryHistory();
+    renderSutWithHistory({}, history);
+
+    await clickFilter(CATEGORY_FILTER_TEST_ID.CATEGORY_PHOTO_INPUT);
+    await clickFilter(TYPE_FILTER_TEST_ID.COLLECTION);
+    await clickFilter(TYPE_FILTER_TEST_ID.DIGITAL);
+    await clickFilter(LEVEL_FILTER_TEST_ID.LEVEL_ZERO_INPUT);
+    await clickFilter(LEVEL_FILTER_TEST_ID.LEVEL_ZERO_NON_PROFESSIONAL);
+
+    [CATEGORY_FILTER_TEST_ID.CATEGORY_PHOTO_INPUT, TYPE.COLLECTION, TYPE.DIGITAL, LEVEL.NON_PROFESSIONAL, LEVEL.ZERO].forEach((filterItem) => {
+      expect(history.location.search.includes(filterItem)).toBe(false);
+    });
   });
 });

@@ -21,7 +21,7 @@ import {
 } from '../../store/cameras-slice/cameras-slice';
 import { debounce, isEmpty } from '../../utils';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FILTER_TEST_ID } from './test-ids';
+import { CATEGORY_FILTER_TEST_ID, LEVEL_FILTER_TEST_ID, TYPE_FILTER_TEST_ID } from './test-ids';
 
 const PRICE_HANDLING_TIMEOUT = 1000;
 const types = Object.values(TYPE);
@@ -45,6 +45,25 @@ type Props = {
 }
 
 const photoOnlyTypes: Type[] = [TYPE.SNAPSHOT, TYPE.FILM];
+
+const typeTestIds: Record<Type, string> = {
+  [TYPE.COLLECTION]: TYPE_FILTER_TEST_ID.COLLECTION,
+  [TYPE.DIGITAL]: TYPE_FILTER_TEST_ID.DIGITAL,
+  [TYPE.FILM]: TYPE_FILTER_TEST_ID.FILM,
+  [TYPE.SNAPSHOT]: TYPE_FILTER_TEST_ID.SNAPSHOT,
+};
+
+const getTypeTestId = (cameraType: Type): string => typeTestIds[cameraType];
+
+const typeNames: Record<Type, string> = {
+  [TYPE.COLLECTION]: 'Коллекционная',
+  [TYPE.DIGITAL]: 'Цифровая',
+  [TYPE.FILM]: 'Плёночная',
+  [TYPE.SNAPSHOT]: 'Моментальная',
+};
+
+const getTypeName = (cameraType: Type): string => typeNames[cameraType];
+
 
 function Filters({ onFilterChange }: Props): JSX.Element {
   const location = useLocation();
@@ -231,6 +250,22 @@ function Filters({ onFilterChange }: Props): JSX.Element {
     debouncedPriceMaxHandler(newPriceMaxInput);
   };
 
+  const makeTypeFilterElement = (cameraType: Type): JSX.Element => (
+    <div key={cameraType} className="custom-checkbox catalog-filter__item" >
+      <label>
+        <input
+          data-testid={getTypeTestId(cameraType)}
+          onChange={makeTypeOnChangeHandler(cameraType)}
+          type="checkbox"
+          name="digital"
+          checked={selectedTypes.includes(cameraType)}
+        />
+        <span className="custom-checkbox__icon" />
+        <span className="custom-checkbox__label">{getTypeName(cameraType)}</span>
+      </label>
+    </div>
+  );
+
   return (
     <div className="catalog-filter">
       <form action="#">
@@ -269,7 +304,7 @@ function Filters({ onFilterChange }: Props): JSX.Element {
           <div className="custom-radio catalog-filter__item">
             <label>
               <input
-                data-testid={FILTER_TEST_ID.CATEGORY_PHOTO_INPUT}
+                data-testid={CATEGORY_FILTER_TEST_ID.CATEGORY_PHOTO_INPUT}
                 onChange={makeCategoryOnChangeHandler(CATEGORY.PHOTO)}
                 type="radio"
                 name="category"
@@ -283,6 +318,7 @@ function Filters({ onFilterChange }: Props): JSX.Element {
           <div className="custom-radio catalog-filter__item">
             <label>
               <input
+                data-testid={CATEGORY_FILTER_TEST_ID.CATEGORY_VIDEO_INPUT}
                 type="radio"
                 name="category"
                 defaultValue="videocamera"
@@ -296,62 +332,7 @@ function Filters({ onFilterChange }: Props): JSX.Element {
         </fieldset>
         <fieldset className="catalog-filter__block">
           <legend className="title title--h5">Тип камеры</legend>
-          <div className="custom-checkbox catalog-filter__item" >
-            <label>
-              <input
-                onChange={makeTypeOnChangeHandler(TYPE.DIGITAL)}
-                type="checkbox"
-                name="digital"
-                checked={selectedTypes.includes(TYPE.DIGITAL)}
-              />
-              <span className="custom-checkbox__icon" />
-              <span className="custom-checkbox__label">Цифровая</span>
-            </label>
-          </div>
-          <div
-            className="custom-checkbox catalog-filter__item"
-          >
-            <label>
-              <input
-                onChange={makeTypeOnChangeHandler(TYPE.FILM)}
-                type="checkbox"
-                name="film"
-                disabled={selectedCategory === CATEGORY.VIDEO}
-                checked={selectedTypes.includes(TYPE.FILM)}
-              />
-              <span className="custom-checkbox__icon" />
-              <span className="custom-checkbox__label">Плёночная</span>
-            </label>
-          </div>
-          <div
-            className="custom-checkbox catalog-filter__item"
-          >
-            <label>
-              <input
-                onChange={makeTypeOnChangeHandler(TYPE.SNAPSHOT)}
-                type="checkbox"
-                name="snapshot"
-                disabled={selectedCategory === CATEGORY.VIDEO}
-                checked={selectedTypes.includes(TYPE.SNAPSHOT)}
-              />
-              <span className="custom-checkbox__icon" />
-              <span className="custom-checkbox__label">Моментальная</span>
-            </label>
-          </div>
-          <div
-            className="custom-checkbox catalog-filter__item"
-          >
-            <label>
-              <input
-                onChange={makeTypeOnChangeHandler(TYPE.COLLECTION)}
-                type="checkbox"
-                name="collection"
-                checked={selectedTypes.includes(TYPE.COLLECTION)}
-              />
-              <span className="custom-checkbox__icon" />
-              <span className="custom-checkbox__label">Коллекционная</span>
-            </label>
-          </div>
+          {Object.values(TYPE).map((item) => makeTypeFilterElement(item))}
         </fieldset>
         <fieldset className="catalog-filter__block">
           <legend className="title title--h5">Уровень</legend>
@@ -359,7 +340,9 @@ function Filters({ onFilterChange }: Props): JSX.Element {
             className="custom-checkbox catalog-filter__item"
           >
             <label>
-              <input type="checkbox"
+              <input
+                data-testid={LEVEL_FILTER_TEST_ID.LEVEL_ZERO_INPUT}
+                type="checkbox"
                 name="zero"
                 onChange={makeLevelOnChangeHandler(LEVEL.ZERO)}
                 checked={selectedLevels.includes(LEVEL.ZERO)}
@@ -373,6 +356,7 @@ function Filters({ onFilterChange }: Props): JSX.Element {
           >
             <label>
               <input
+                data-testid={LEVEL_FILTER_TEST_ID.LEVEL_ZERO_NON_PROFESSIONAL}
                 type="checkbox"
                 name="non-professional"
                 onChange={makeLevelOnChangeHandler(LEVEL.NON_PROFESSIONAL)}
@@ -387,6 +371,7 @@ function Filters({ onFilterChange }: Props): JSX.Element {
           >
             <label>
               <input
+                data-testid={LEVEL_FILTER_TEST_ID.LEVEL_ZERO_PROFESSIONAL}
                 type="checkbox"
                 name="professional"
                 onChange={makeLevelOnChangeHandler(LEVEL.PROFESSIONAL)}
