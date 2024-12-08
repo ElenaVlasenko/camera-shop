@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { AppRoute } from '../../const';
 import SearchForm from '../search-form/search-form';
+import CartIcon from '../cart-item/cart-icon';
 
 function Header(): JSX.Element {
   return (
@@ -40,6 +41,7 @@ function Header(): JSX.Element {
           </ul>
         </nav>
         <SearchForm />
+        <CartIcon />
       </div>
     </header>
   );

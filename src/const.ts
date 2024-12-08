@@ -2,12 +2,14 @@ export enum AppRoute {
   Main = '/',
   Cameras = '/cameras',
   Id = ':id',
+  Cart = '/cart'
 }
 
 export enum PageRoute {
   Main = AppRoute.Main,
   Cameras = AppRoute.Cameras,
   Camera = `${AppRoute.Cameras}/${AppRoute.Id}`,
+  Cart = AppRoute.Cart,
 }
 
 export enum ServerRoute {
