@@ -1,6 +1,6 @@
 import { CATEGORY, LEVEL, TYPE } from '../const';
 import { Camera, OrderParams, Review } from '../types';
-import { getRandomArrayElement, intBetween, makeCounter, makeList, makeUniqStringGenerator } from './utils';
+import { getRandomArrayElement, getIntBetween, makeCounter, makeList, makeUniqStringGenerator } from './utils';
 
 const generateUniqCameraName = makeUniqStringGenerator((n) => `camera-name-${n}`);
 const generateUniqVendorCode = makeUniqStringGenerator((n) => `vendor-code-${n}`);
@@ -25,9 +25,9 @@ export const generateCamera = (params: Partial<Camera> = {}): Camera => {
     category: generateCategory(),
     description: generateDescription(id),
     level: generateLevel(),
-    price: intBetween(1000, 200000),
-    rating: intBetween(1, 5),
-    reviewCount: intBetween(0, 10),
+    price: getIntBetween(1000, 200000),
+    rating: getIntBetween(1, 5),
+    reviewCount: getIntBetween(0, 10),
     previewImg: generatePreviewImg(id),
     previewImg2x: generatePreviewImg2x(id),
     previewImgWebp: generatePreviewImgWebp(),
@@ -53,15 +53,14 @@ export const generateReview = (params: Partial<Review> = {}): Review => {
     advantage: generateUniqAdvantage(id),
     disadvantage: generateUniqDisadvantage(id),
     review: generateUniqReview(id),
-    rating: intBetween(1, 5),
+    rating: getIntBetween(1, 5),
     ...params,
   });
 };
 
 export const generateOrder = (params: Partial<OrderParams> = {}): OrderParams => ({
-  camerasIds: makeList(intBetween(1, 10), () => getNextSerial()),
+  camerasIds: makeList(getIntBetween(1, 10), () => getNextSerial()),
   coupon: null,
-  tel: `+79${intBetween(100_000_000, 99_999_999).toString()}`,
   ...params,
 });
 

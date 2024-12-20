@@ -5,7 +5,7 @@ import api from './api';
 const orderApi = {
   async addOrder(order: OrderParams): Promise<void> {
     await api.post<void>(ServerRoute.Orders, order);
-  }
+  },
 };
 
 type OrderApi = typeof orderApi;

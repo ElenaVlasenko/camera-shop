@@ -31,7 +31,6 @@ export type Review = {
 export type OrderParams = {
   camerasIds: number[];
   coupon: string | null;
-  tel: string;
 }
 
 export type Promo = {
@@ -42,3 +41,5 @@ export type Promo = {
   previewImgWebp: string;
   previewImgWebp2x: string;
 }
+
+export type CameraCounts = { [cameraId: number]: number };

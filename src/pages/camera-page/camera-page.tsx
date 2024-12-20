@@ -20,7 +20,6 @@ import { AppRoute } from '../../const';
 import Rating from '../../components/rating/rating';
 import CamerasSimilarList from '../../components/cameras-similar/cameras-similar-list';
 import { hasId, makeQueryParameter, scrollToTop, throttle } from '../../utils';
-import ModalCall from '../../components/modal-call/modal-call';
 import { BACK_TO_TOP_BUTTON_ID, DESCRIPTION_SECTION_ID, DESCRIPTION_BUTTON_ID, PROPERTIES_SECTION_ID, PROPERTIES_BUTTON_ID } from './utils';
 
 type Props = Camera;
@@ -154,7 +153,7 @@ function CameraPage({
                   <p className="product__price">
                     <span className="visually-hidden">Цена:</span>{price.toLocaleString('ru')} ₽
                   </p>
-                  <button className="btn btn--purple visually-hidden" type="button">
+                  <button className="btn btn--purple" type="button">
                     <svg width={24} height={16} aria-hidden="true">
                       <use xlinkHref="#icon-add-basket" />
                     </svg>
@@ -220,7 +219,6 @@ function CameraPage({
             </section>
           </div>
           {makeSimilarList()}
-          <ModalCall camera={selectedCamera} onCloseButtonClick={closeCallModal} />
           <div className="page-content__section">
             <section className="review-block">
               <div className="container">

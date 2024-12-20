@@ -3,15 +3,15 @@ import userEvent from '@testing-library/user-event';
 
 type IntBetween = (n1: number, n2: number) => number;
 
-export const intBetween: IntBetween = (n1, n2) => {
+export const getIntBetween: IntBetween = (n1, n2) => {
   const max = Math.max(n1, n2);
   const min = Math.min(n1, n2);
 
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-export const getRandomArrayElement = <T>(list: T[]) => list[intBetween(0, list.length - 1)];
-export const idsOf = <T extends { id: number }>(list: T[]): number[] => list.map((it) => it.id);
+export const getRandomArrayElement = <T>(list: T[]) => list[getIntBetween(0, list.length - 1)];
+export const getIdsOf = <T extends { id: unknown }>(list: T[]): T['id'][] => list.map((it) => it.id);
 
 type MakeCounter = (start?: number) => () => number;
 

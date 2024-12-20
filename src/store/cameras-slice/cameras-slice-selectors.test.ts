@@ -1,14 +1,14 @@
 import { CATEGORY, LEVEL, SortingKey, SortingOrder, TYPE } from '../../const';
 import { generateCamera } from '../../test/test-data-generators';
-import { getRandomArrayElement, idsOf, intBetween, makeList } from '../../test/utils';
+import { getRandomArrayElement, getIdsOf, getIntBetween, makeList } from '../../test/utils';
 import { Camera } from '../../types';
 import { CamerasState, defaultState, selectCameras, selectDisplayedCameras, selectIsCamerasLoading, selectPromo, selectSimilar } from './cameras-slice';
 
 const expectEqualItems = (cameraList1: Camera[], cameraList2: Camera[]) => {
   expect(cameraList1.length).toEqual(cameraList2.length);
 
-  const list1Ids = idsOf(cameraList1);
-  const list2Ids = idsOf(cameraList2);
+  const list1Ids = getIdsOf(cameraList1);
+  const list2Ids = getIdsOf(cameraList2);
   expect(list1Ids.every((id) => list2Ids.includes(id))).toBe(true);
 };
 
@@ -77,8 +77,8 @@ describe('Camera slice selectors tests', () => {
 
     it('selectDisplayedCameras returns cameras filtered by min price when state.priceMin was set', () => {
       const priceMin = 3000;
-      const subjects = makeList(3, () => generateCamera({ price: intBetween(priceMin, priceMin * 2) }));
-      const control = makeList(3, () => generateCamera({ price: intBetween(1, priceMin) }));
+      const subjects = makeList(3, () => generateCamera({ price: getIntBetween(priceMin, priceMin * 2) }));
+      const control = makeList(3, () => generateCamera({ price: getIntBetween(1, priceMin) }));
       const state: CamerasState = { ...defaultState, cameras: [...control, ...subjects], priceMin };
 
       const displayedCameras = selectDisplayedCameras.unwrapped(state);
@@ -88,8 +88,8 @@ describe('Camera slice selectors tests', () => {
 
     it('selectDisplayedCameras returns cameras filtered by max price when state.priceMin was set', () => {
       const priceMax = 3000;
-      const subjects = makeList(3, () => generateCamera({ price: intBetween(1, priceMax) }));
-      const control = makeList(3, () => generateCamera({ price: intBetween(priceMax, priceMax * 2) }));
+      const subjects = makeList(3, () => generateCamera({ price: getIntBetween(1, priceMax) }));
+      const control = makeList(3, () => generateCamera({ price: getIntBetween(priceMax, priceMax * 2) }));
       const state: CamerasState = { ...defaultState, cameras: [...control, ...subjects], priceMax };
 
       const displayedCameras = selectDisplayedCameras.unwrapped(state);
@@ -105,7 +105,7 @@ describe('Camera slice selectors tests', () => {
       const subjectLevel = LEVEL.NON_PROFESSIONAL;
 
       const makeSubject = () => generateCamera({
-        price: intBetween(priceMin, priceMax),
+        price: getIntBetween(priceMin, priceMax),
         type: subjectType,
         category: subjectCategory,
         level: subjectLevel
@@ -114,9 +114,9 @@ describe('Camera slice selectors tests', () => {
       const subjects = makeList(3, makeSubject);
 
       const control = [
-        generateCamera({ price: intBetween(priceMax, priceMax * 2) }),
-        generateCamera({ price: intBetween(1, priceMin) }),
-        generateCamera({ price: intBetween(1, priceMin) }),
+        generateCamera({ price: getIntBetween(priceMax, priceMax * 2) }),
+        generateCamera({ price: getIntBetween(1, priceMin) }),
+        generateCamera({ price: getIntBetween(1, priceMin) }),
         generateCamera({ category: CATEGORY.VIDEO }),
         generateCamera({ type: TYPE.DIGITAL }),
         generateCamera({ level: LEVEL.PROFESSIONAL }),

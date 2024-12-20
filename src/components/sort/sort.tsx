@@ -25,22 +25,22 @@ function Sort(): JSX.Element {
     dispatch(setSortingOrder(sortingOrder));
   };
 
-  const makeOnSortingOrderChangeHandler = (sortingOrder: SortingOrder) => () => {
+  const makeSortingOrderChangeHandler = (sortingOrder: SortingOrder) => () => {
     const urlParams = new URLSearchParams(location.search);
     handleSortingDirectionButtonClick(sortingOrder);
     urlParams.set('sortingOrder', sortingOrder);
     navigate(`${location.pathname}?${urlParams.toString()}`);
   };
 
-  const makeOnSortingKeyChangeHandler = (sortingKey: SortingKey) => () => {
+  const makeSortingKeyChangeHandler = (sortingKey: SortingKey) => () => {
     const urlParams = new URLSearchParams(location.search);
     handleSortingKeyButtonClick(sortingKey);
     urlParams.set('sortBy', sortingKey);
     navigate(`${location.pathname}?${urlParams.toString()}`);
   };
 
-  const changeSortingToASC = makeOnSortingOrderChangeHandler(SortingOrder.ASC);
-  const changeSortingToDESC = makeOnSortingOrderChangeHandler(SortingOrder.DESC);
+  const changeSortingToASC = makeSortingOrderChangeHandler(SortingOrder.ASC);
+  const changeSortingToDESC = makeSortingOrderChangeHandler(SortingOrder.DESC);
 
   useEffect(
     () => {
@@ -107,7 +107,7 @@ function Sort(): JSX.Element {
                 id="sortPrice"
                 name="sort"
                 checked={selectedSortingKey === SortingKey.Price}
-                onChange={makeOnSortingKeyChangeHandler(SortingKey.Price)}
+                onChange={makeSortingKeyChangeHandler(SortingKey.Price)}
               />
               <label htmlFor="sortPrice">по цене</label>
             </div>
@@ -117,7 +117,7 @@ function Sort(): JSX.Element {
                 id="sortPopular"
                 name="sort"
                 checked={selectedSortingKey === SortingKey.Rating}
-                onChange={makeOnSortingKeyChangeHandler(SortingKey.Rating)}
+                onChange={makeSortingKeyChangeHandler(SortingKey.Rating)}
               />
               <label htmlFor="sortPopular">по популярности</label>
             </div>
@@ -130,7 +130,7 @@ function Sort(): JSX.Element {
                 name="sort-icon"
                 aria-label="По возрастанию"
                 checked={selectedSortingOrder === SortingOrder.ASC}
-                onChange={changeSortingToASC}
+                onChange={() => changeSortingToASC()}
               />
               <label htmlFor="up">
                 <svg width={16} height={14} aria-hidden="true">
@@ -145,7 +145,7 @@ function Sort(): JSX.Element {
                 name="sort-icon"
                 aria-label="По убыванию"
                 checked={selectedSortingOrder === SortingOrder.DESC}
-                onChange={changeSortingToDESC}
+                onChange={() => changeSortingToDESC()}
               />
               <label htmlFor="down">
                 <svg width={16} height={14} aria-hidden="true">

@@ -1,22 +1,58 @@
 import { Link } from 'react-router-dom';
 import { Camera } from '../../types';
-import { AppRoute } from '../../const';
-import { MouseEventHandler } from 'react';
+import { AppRoute, PageRoute } from '../../const';
 import Rating from '../rating/rating';
 import { makeBuyButtonTestId, makeInfoButtonTestId } from './utils';
 
 type Props = {
   camera: Camera;
   onBuyButtonClick: (id: Camera['id']) => void;
+  inCart: boolean;
 }
 
-function CameraListItem({ camera, onBuyButtonClick }: Props): JSX.Element {
+type ButtonProps = {
+  onClick: () => void;
+  cameraId: Camera['id'];
+}
+
+function BuyButton({ onClick, cameraId }: ButtonProps): JSX.Element {
+  return (
+    <button
+      data-testid={makeBuyButtonTestId(cameraId)}
+      onClick={(evt) => {
+        evt.preventDefault();
+        onClick();
+      }}
+      className="btn btn--purple product-card__btn"
+      type="button"
+    >
+      Купить
+    </button>
+  );
+}
+
+function InCartButton(): JSX.Element {
+  return (
+    <Link
+      className="btn btn--purple-border product-card__btn product-card__btn--in-cart"
+      to={PageRoute.Cart}
+    >
+      <svg width={16} height={16} aria-hidden="true">
+        <use xlinkHref="#icon-basket" />
+      </svg>
+      В корзине
+    </Link>
+
+  );
+}
+
+function CameraListItem({ camera, onBuyButtonClick, inCart }: Props): JSX.Element {
   const { id, name, previewImg, previewImg2x, previewImgWebp, previewImgWebp2x, price, rating, reviewCount } = camera;
 
-  const handleBuyButtonClick: MouseEventHandler<HTMLButtonElement> = (evt) => {
-    evt.preventDefault();
-    onBuyButtonClick(id);
-  };
+  // const handleBuyButtonClick: MouseEventHandler<HTMLButtonElement> = (evt) => {
+  //   evt.preventDefault();
+  //   onBuyButtonClick(id);
+  // };
 
   return (
     <div className="product-card">
@@ -51,14 +87,7 @@ function CameraListItem({ camera, onBuyButtonClick }: Props): JSX.Element {
         </p>
       </div>
       <div className="product-card__buttons">
-        <button
-          data-testid={makeBuyButtonTestId(id)}
-          onClick={handleBuyButtonClick}
-          className="btn btn--purple product-card__btn"
-          type="button"
-        >
-          Купить
-        </button>
+        {inCart ? <InCartButton /> : <BuyButton onClick={() => onBuyButtonClick(id)} cameraId={camera.id} />}
         <Link data-testid={makeInfoButtonTestId(id)} to={`${AppRoute.Cameras}/${id}`} className="btn btn--transparent">
           Подробнее
         </Link>

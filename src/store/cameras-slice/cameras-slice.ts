@@ -43,7 +43,7 @@ export const defaultState: CamerasState = {
 export const CAMERAS_SLICE_NAME = 'cameras';
 const MIN_SEARCH_TEXT_LENGTH = 3;
 
-const makeSorter = (sortingKey: SortingKey, sortingOrder: SortingOrder) => (c1: Camera, c2: Camera) => sortingOrder === SortingOrder.ASC ? c1[sortingKey] - c2[sortingKey] : c2[sortingKey] - c1[sortingKey];
+const getComparator = (sortingKey: SortingKey, sortingOrder: SortingOrder) => (c1: Camera, c2: Camera) => sortingOrder === SortingOrder.ASC ? c1[sortingKey] - c2[sortingKey] : c2[sortingKey] - c1[sortingKey];
 
 const getSearchText = (state: Pick<CamerasState, 'searchText'>) => state.searchText;
 const getCameras = (state: Pick<CamerasState, 'cameras'>) => state.cameras;
@@ -90,7 +90,7 @@ const getDisplayedCameras = createSelector(
         hasPrice(priceMin, priceMax)
       )
     )
-    .sort(makeSorter(sortingKey, sortingOrder))
+    .sort(getComparator(sortingKey, sortingOrder))
 );
 
 const getDisplayedCamerasWithoutPriceFilter = createSelector(
@@ -110,7 +110,7 @@ const getDisplayedCamerasWithoutPriceFilter = createSelector(
         hasLevel(level),
       )
     )
-    .sort(makeSorter(sortingKey, sortingOrder))
+    .sort(getComparator(sortingKey, sortingOrder))
 );
 
 export const makeCamerasSlice = (initialState: CamerasState) => createSliceWithThunks({

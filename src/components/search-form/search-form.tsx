@@ -88,11 +88,11 @@ function SearchForm(): JSX.Element {
     };
   }, [foundedCameras, focusedCameraIndex, dispatch]);
 
-  const handleOnChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchTextChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setSearchText(evt.target.value));
   };
 
-  const handleOnResetButton = () => {
+  const handleResetButtonClick = () => {
     dispatch(resetSearchText());
   };
 
@@ -109,7 +109,7 @@ function SearchForm(): JSX.Element {
             <use xlinkHref="#icon-lens" />
           </svg>
           <input
-            onChange={handleOnChange}
+            onChange={handleSearchTextChange}
             className="form-search__input"
             type="text"
             autoComplete="off"
@@ -121,7 +121,7 @@ function SearchForm(): JSX.Element {
           {foundedCameras.map((camera, i) => <SearchListItem key={camera.id} index={i} cameraName={camera.name} id={camera.id} isFocused={i === focusedCameraIndex} />)}
         </ul>
       </form>
-      <button onClick={handleOnResetButton} style={stateSearchText.length > 0 ? { display: 'block' } : { display: 'none' }} className="form-search__reset" type="reset">
+      <button onClick={handleResetButtonClick} style={stateSearchText.length > 0 ? { display: 'block' } : { display: 'none' }} className="form-search__reset" type="reset">
         <svg width={10} height={10} aria-hidden="true">
           <use xlinkHref="#icon-close" />
         </svg>

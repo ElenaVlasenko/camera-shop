@@ -1,4 +1,4 @@
-import { Camera } from './types';
+import { Camera, CameraCounts } from './types';
 
 export const hasId = (id?: Camera['id']) => (camera: Camera) => id === camera.id;
 export const isEmpty = <T>(list: T[]) => list.length === 0;
@@ -80,4 +80,40 @@ export const makeQueryParameter = (key: string, ...values: string[]): string => 
   values.forEach((val) => params.append(key, val));
 
   return params.toString();
+};
+
+
+export const getDiscount = (orderPrice: number, counts: CameraCounts) => {
+  let totalDiscount = 0;
+  const totalProductCount = Object.values(counts).reduce((a, b) => a + b, 0);
+
+  if (totalProductCount >= 2) {
+    totalDiscount = 3;
+  }
+
+  if (totalProductCount >= 3) {
+    totalDiscount = 5;
+  }
+
+  if (totalProductCount >= 6) {
+    totalDiscount = 10;
+  }
+
+  if (totalProductCount > 10) {
+    totalDiscount = 15;
+  }
+
+  if (orderPrice >= 10000 && orderPrice <= 20000) {
+    totalDiscount = totalDiscount - 1;
+  }
+
+  if (orderPrice > 20000 && orderPrice <= 30000) {
+    totalDiscount = totalDiscount - 2;
+  }
+
+  if (orderPrice > 30000) {
+    totalDiscount = totalDiscount - 3;
+  }
+
+  return totalDiscount;
 };

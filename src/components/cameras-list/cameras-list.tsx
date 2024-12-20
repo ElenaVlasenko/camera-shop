@@ -12,6 +12,7 @@ import { getChunks } from '../../utils';
 
 type Props = {
   onBuyButtonClick: (id: Camera['id']) => void;
+  cartCameraIds: Camera['id'][];
 }
 
 const URL_PARAMS = {
@@ -21,7 +22,7 @@ const URL_PARAMS = {
 const makeSequence = (length: number, startFrom = 1) => Array.from({ length }, (_, i) => i + startFrom);
 const makePagesStr = (totalPages: number, startFrom = 1) => makeSequence(totalPages, startFrom).join(',');
 
-function CatalogList({ onBuyButtonClick }: Props): JSX.Element {
+function CatalogList({ onBuyButtonClick, cartCameraIds }: Props): JSX.Element {
   const [currentPage, setCurrentPage] = useState(1);
   const displayedCameras = useAppSelector(selectDisplayedCameras);
   const totalPages = Math.ceil(displayedCameras.length / MAX_DISPLAYED_CAMERAS_COUNT) || 1;
@@ -111,7 +112,14 @@ function CatalogList({ onBuyButtonClick }: Props): JSX.Element {
           <div className="catalog__content">
             <Sort />
             <div className="cards catalog__cards">
-              {pageCameras.map((camera) => <CameraListItem key={camera.id} camera={camera} onBuyButtonClick={onBuyButtonClick} />)}
+              {pageCameras.map((camera) => (
+                <CameraListItem
+                  key={camera.id}
+                  camera={camera}
+                  onBuyButtonClick={onBuyButtonClick}
+                  inCart={cartCameraIds.includes(camera.id)}
+                />)
+              )}
             </div>{totalPages === 1 ?
               null :
               <Pagination
