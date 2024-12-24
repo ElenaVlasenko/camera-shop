@@ -1,7 +1,6 @@
 import { buildCreateSlice, asyncThunkCreator } from '@reduxjs/toolkit';
 import { Camera, CameraCounts } from '../../types';
 import { OrderApi } from '../../api/order-api';
-import { showErrorMessage } from '../error-slice/error-slice';
 import { ORDER_REQUEST_STATUS, OrderRequestStatus } from '../../const';
 import { getIdsOf } from '../../test/utils';
 
@@ -9,6 +8,7 @@ export type OrderState = {
   cameras: Camera[];
   camerasCounts: CameraCounts;
   orderRequestStatus: null | OrderRequestStatus;
+  errorMessage: null | string;
 }
 
 type Cart = Pick<OrderState, 'cameras' | 'camerasCounts'>;
@@ -20,7 +20,8 @@ export const defaultCart: Cart = {
 
 export const defaultState: OrderState = {
   ...defaultCart,
-  orderRequestStatus: null
+  orderRequestStatus: null,
+  errorMessage: null
 };
 
 const createSliceWithThunks = buildCreateSlice({
@@ -55,18 +56,14 @@ export const makeOrderSlice = (initialState = getInitialState()) => createSliceW
   },
   reducers: (create) => ({
     addOrderAction: create.asyncThunk<void, { coupon: string | null }, { extra: { orderApi: OrderApi } }>(
-      ({ coupon }, { extra: { orderApi }, dispatch, getState }) => {
+      ({ coupon }, { extra: { orderApi }, getState }) => {
         const state = (getState() as { [ORDER_SLICE_NAME]: OrderState })[ORDER_SLICE_NAME];
 
         if (state.cameras.length === 0) {
           return;
         }
 
-        return orderApi.addOrder({ camerasIds: getIdsOf(state.cameras), coupon: coupon ?? null })
-          .catch((err) => {
-            showErrorMessage(err, dispatch);
-            throw err;
-          });
+        return orderApi.addOrder({ camerasIds: getIdsOf(state.cameras), coupon: coupon ?? null });
       },
       {
         pending: (state) => {

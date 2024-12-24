@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
 import { addOrderAction, removeCameraFromCart, resetOrderStatus, selectCameras, selectCamerasCounts, selectOrderRequestStatus } from '../../store/order-slice.ts/order-slice';
 import { Camera } from '../../types';
 import { useNavigate } from 'react-router-dom';
-import { getDiscount } from '../../utils';
+import { getDiscount, isEmpty } from '../../utils';
 import Spinner from '../../components/spinner/spinner';
 import ModalCartOrder from '../../components/modal-cart-order/modal-cart-order';
 
@@ -48,7 +48,10 @@ function CartPage(): JSX.Element {
   const handleModalCartOrderCloseButtonClick = () => {
     document.body.style.overflow = '';
     dispatch(resetOrderStatus());
-    navigate(PageRoute.Cameras);
+
+    if (isEmpty(cameras)) {
+      navigate(PageRoute.Cameras);
+    }
   };
 
   const handleModalCartDeleteCloseButtonClick = () => {
@@ -56,10 +59,15 @@ function CartPage(): JSX.Element {
     setDeletingCamera(null);
   };
 
-  const handleContinueShoppingClick = () => {
+  const handleContinueShoppingInOrderModalClick = () => {
     document.body.style.overflow = '';
     navigate(PageRoute.Cameras);
     dispatch(resetOrderStatus());
+  };
+
+  const handleContinueShoppingInDeleteModalClick = () => {
+    setDeletingCamera(null);
+    document.body.style.overflow = '';
   };
 
   return orderStatus === ORDER_REQUEST_STATUS.IN_PROGRESS ? <Spinner /> : (
@@ -108,7 +116,7 @@ function CartPage(): JSX.Element {
                       {totalPrice.toLocaleString('ru')} ₽
                     </span>
                   </p>
-                  <button onClick={handleSubmitOrder} className="btn btn--purple" type="submit">
+                  <button onClick={handleSubmitOrder} className="btn btn--purple" type="submit" disabled={cameras.length === 0}>
                     Оформить заказ
                   </button>
                 </div>
@@ -117,8 +125,19 @@ function CartPage(): JSX.Element {
           </section>
         </div>
       </main>
-      {deletingCamera === null ? null : <ModalCartDelete camera={deletingCamera} onDeleteButtonClick={handleConfirmDeletionClick} onCloseButtonClick={handleModalCartDeleteCloseButtonClick} />}
-      {orderStatus === ORDER_REQUEST_STATUS.SUCCESS ? <ModalCartOrder onCloseButtonClick={handleModalCartOrderCloseButtonClick} onContinueShoppingButtonClick={handleContinueShoppingClick} /> : ''}
+      {deletingCamera === null ? null :
+        <ModalCartDelete
+          camera={deletingCamera}
+          onDeleteButtonClick={handleConfirmDeletionClick}
+          onCloseButtonClick={handleModalCartDeleteCloseButtonClick}
+          onContinueShoppingButtonClick={handleContinueShoppingInDeleteModalClick}
+        />}
+      {orderStatus === ORDER_REQUEST_STATUS.SUCCESS || orderStatus === ORDER_REQUEST_STATUS.FAILED ?
+        <ModalCartOrder
+          orderStatus={orderStatus}
+          onCloseButtonClick={handleModalCartOrderCloseButtonClick}
+          onContinueShoppingButtonClick={orderStatus === ORDER_REQUEST_STATUS.SUCCESS ? handleContinueShoppingInOrderModalClick : handleModalCartOrderCloseButtonClick}
+        /> : ''}
       <Footer />
     </>
   );

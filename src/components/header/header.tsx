@@ -2,8 +2,13 @@ import { Link } from 'react-router-dom';
 import { AppRoute } from '../../const';
 import SearchForm from '../search-form/search-form';
 import CartIcon from '../cart-icon/cart-icon';
+import { useAppSelector } from '../../hooks/hooks';
+import { selectCamerasCounts } from '../../store/order-slice.ts/order-slice';
 
 function Header(): JSX.Element {
+  const cameras = useAppSelector(selectCamerasCounts);
+  const cartCount = Object.values(cameras).reduce((a, b) => a + b, 0);
+
   return (
     <header className="header" id="header">
       <div className="container">
@@ -41,7 +46,8 @@ function Header(): JSX.Element {
           </ul>
         </nav>
         <SearchForm />
-        <CartIcon />
+        {cartCount === 0 ? '' :
+          <CartIcon cartCount={cartCount} />}
       </div>
     </header>
   );

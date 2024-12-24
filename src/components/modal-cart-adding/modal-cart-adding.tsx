@@ -3,7 +3,7 @@ import { Camera } from '../../types';
 import { KEYCODE_TAB } from '../../const';
 
 type Props = {
-  camera: Camera | null;
+  camera: Camera;
   onCloseButtonClick: () => void;
   onAddButtonClick: () => void;
 };
@@ -55,10 +55,6 @@ function ModalCartAdding({ camera, onCloseButtonClick, onAddButtonClick }: Props
       document.removeEventListener('keydown', handleTabKey);
     };
   }, [setFocusedElementIndex, focusedRefIndex, closeButtonRef]);
-
-  if (camera === null) {
-    return null;
-  }
 
   const { name, previewImg, vendorCode, level, type, price, previewImg2x, previewImgWebp, previewImgWebp2x } = camera;
 

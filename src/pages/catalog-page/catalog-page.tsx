@@ -68,9 +68,15 @@ function CatalogPage(): JSX.Element {
           <Navigation menuPath={[{ name: 'Главная', to: '#' }]} currentItem='Каталог' />
           <CatalogList onBuyButtonClick={openModalCartAdding} cartCameraIds={getIdsOf(camerasInCart)} />
         </div>
-        <ModalCartAdding camera={selectedCamera} onCloseButtonClick={closeModalCartAdding} onAddButtonClick={addToCartButton} />
+        {selectedCamera === null ? null :
+          <ModalCartAdding camera={selectedCamera} onCloseButtonClick={closeModalCartAdding} onAddButtonClick={addToCartButton} />}
         {isModalAddItemSuccessOpen
-          ? <ModalAddItemSuccess onContinueShoppingButtonClick={handleContinueShoppingButtonClick} onGoToCartButtonClick={handleGoToCartButtonClick} onCloseButtonClick={closeModalAddItemSuccess} />
+          ?
+          <ModalAddItemSuccess
+            onContinueShoppingButtonClick={handleContinueShoppingButtonClick}
+            onGoToCartButtonClick={handleGoToCartButtonClick}
+            onCloseButtonClick={closeModalAddItemSuccess}
+          />
           : null}
       </main>
       <Footer />

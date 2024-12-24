@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { KEYCODE_TAB } from '../../const';
+import { KEYCODE_TAB, ORDER_REQUEST_STATUS, OrderRequestStatus } from '../../const';
 
 type Props = {
   onCloseButtonClick: () => void;
   onContinueShoppingButtonClick: () => void;
+  orderStatus: OrderRequestStatus;
 };
 
-function ModalCartOrder({ onCloseButtonClick, onContinueShoppingButtonClick }: Props): JSX.Element {
+function ModalCartOrder({ onCloseButtonClick, onContinueShoppingButtonClick, orderStatus }: Props): JSX.Element {
 
   const closeButtonRef = useRef(null);
   const continueShoppingButtonRef = useRef(null);
@@ -59,10 +60,11 @@ function ModalCartOrder({ onCloseButtonClick, onContinueShoppingButtonClick }: P
       <div className="modal__wrapper">
         <div className="modal__overlay"></div>
         <div className="modal__content">
-          <p className="title title--h4">Спасибо за покупку</p>
-          <svg className="modal__icon" width="80" height="78" aria-hidden="true">
-            <use xlinkHref="#icon-review-success"></use>
-          </svg>
+          <p className="title title--h4">{orderStatus === ORDER_REQUEST_STATUS.SUCCESS ? 'Спасибо за покупку' : 'При создании заказа произошла ошибка. Повторите попытку позднее.'}</p>
+          {orderStatus === ORDER_REQUEST_STATUS.SUCCESS ?
+            <svg className="modal__icon" width="80" height="78" aria-hidden="true">
+              <use xlinkHref="#icon-review-success"></use>
+            </svg> : ''}
           <div className="modal__buttons">
             <button onClick={onContinueShoppingButtonClick} ref={continueShoppingButtonRef} className="btn btn--purple modal__btn modal__btn--fit-width" type="button">Вернуться к покупкам
             </button>

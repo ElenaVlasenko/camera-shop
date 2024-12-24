@@ -1,15 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { Camera } from '../../types';
-import { KEYCODE_TAB, PageRoute } from '../../const';
+import { KEYCODE_TAB } from '../../const';
 import { Link } from 'react-router-dom';
 
 type Props = {
   camera: Camera;
   onCloseButtonClick: () => void;
   onDeleteButtonClick: () => void;
+  onContinueShoppingButtonClick: () => void;
 };
 
-function ModalCartDelete({ camera, onDeleteButtonClick, onCloseButtonClick }: Props): JSX.Element | null {
+function ModalCartDelete({ camera, onDeleteButtonClick, onCloseButtonClick, onContinueShoppingButtonClick }: Props): JSX.Element | null {
 
   const closeButtonRef = useRef(null);
   const deleteButtonRef = useRef(null);
@@ -108,9 +109,10 @@ function ModalCartDelete({ camera, onDeleteButtonClick, onCloseButtonClick }: Pr
               Удалить
             </button>
             <Link
+              onClick={onContinueShoppingButtonClick}
               ref={continueShoppingButtonRef}
               className="btn btn--transparent modal__btn modal__btn--half-width"
-              to={PageRoute.Cameras}
+              to=''
             >
               Продолжить покупки
             </Link>
