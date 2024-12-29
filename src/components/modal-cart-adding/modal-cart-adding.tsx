@@ -122,7 +122,6 @@ function ModalCartAdding({ camera, onCloseButtonClick, onAddButtonClick }: Props
         </div>
       </div>
     </div>
-
   );
 }
 

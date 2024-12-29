@@ -128,7 +128,6 @@ function SearchForm(): JSX.Element {
         <span className="visually-hidden">Сбросить поиск</span>
       </button>
     </div >
-
   );
 }
 

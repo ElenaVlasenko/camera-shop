@@ -1,59 +1,64 @@
 import { render, screen, act } from '@testing-library/react';
 import { Middleware } from '@reduxjs/toolkit';
 import userEvent from '@testing-library/user-event';
-import camerasSlice, { CAMERAS_SLICE_NAME, CamerasState, defaultState, makeCamerasSlice } from '../../store/cameras-slice/cameras-slice';
+import { CAMERAS_SLICE_NAME, CamerasState, defaultState as defaultCamerasState, makeCamerasSlice } from '../../store/cameras-slice/cameras-slice';
 import { createTestStore } from '../../test/store-utils';
 import { CamerasApi } from '../../api/cameras-api';
 import { withHistory, withRouter, withStore } from '../../test/pages-utils';
 import CatalogPage from './catalog-page';
 import { generateCamera } from '../../test/test-data-generators';
-import { clickTo, makeList } from '../../test/utils';
+import { makeList } from '../../test/utils';
 import { Camera } from '../../types';
-import { makeCameraModalTestId, MODAL_CLOSE_BUTTON_ID } from '../../components/modal-call/utils';
 import { AppRoute, CATEGORY, LEVEL, MAX_DISPLAYED_CAMERAS_COUNT, TYPE } from '../../const';
 import { createMemoryHistory, MemoryHistory } from 'history';
-import { makeBuyButtonTestId, makeInfoButtonTestId } from '../../components/cameras-list/utils';
+import { makeInfoButtonTestId } from '../../components/cameras-list/utils';
 import { CATEGORY_FILTER_TEST_ID, LEVEL_FILTER_TEST_ID, TYPE_FILTER_TEST_ID } from '../../components/filters/test-ids';
+import { makeOrderSlice, ORDER_SLICE_NAME, OrderState, defaultState as defaultOrderState } from '../../store/order-slice.ts/order-slice';
+import { reducer } from '../../store/store';
+
+type SliceStates = {
+  [CAMERAS_SLICE_NAME]?: Partial<CamerasState>;
+  [ORDER_SLICE_NAME]?: Partial<OrderState>;
+}
 
 const createPageStore = (
-  slice: typeof camerasSlice = makeCamerasSlice(defaultState),
+  slices: Partial<Pick<typeof reducer, typeof CAMERAS_SLICE_NAME | typeof ORDER_SLICE_NAME>>,
   camerasApi: Partial<CamerasApi> = {},
   middleware?: Middleware
 ) => createTestStore(
-  { [CAMERAS_SLICE_NAME]: slice.reducer },
+  slices,
   { camerasApi },
   middleware
 );
 
-const createSut = (sliceState: Partial<CamerasState>) => withRouter(
+const createSut = ({ cameras, order }: SliceStates) => withRouter(
   withStore(
     <CatalogPage />,
-    createPageStore(makeCamerasSlice({ ...defaultState, ...sliceState }))
+    createPageStore({
+      cameras: makeCamerasSlice({ ...defaultCamerasState, ...cameras }).reducer,
+      order: makeOrderSlice({ ...defaultOrderState, ...order }).reducer
+    })
   )
 );
 
-const renderSut = (sliceState: Partial<CamerasState> = {}) => {
-  const sut = createSut(sliceState);
+const renderSut = (sliceStates: SliceStates = {}) => {
+  const sut = createSut(sliceStates);
 
   render(sut);
 };
 
-const renderSutWithHistory = (sliceState: Partial<CamerasState> = {}, history: MemoryHistory) => {
+const renderSutWithHistory = ({ cameras, order }: SliceStates, history: MemoryHistory) => {
   render(withHistory(
     withStore(
       <CatalogPage />,
-      createPageStore(makeCamerasSlice({ ...defaultState, ...sliceState }))
+      createPageStore({
+        cameras: makeCamerasSlice({ ...defaultCamerasState, ...cameras }).reducer,
+        order: makeOrderSlice({ ...defaultOrderState, ...order }).reducer
+      })
     ),
     history)
   );
 };
-
-const clickBuyButton = async (cameraId: Camera['id']) => {
-  const buyButton = screen.getByTestId(makeBuyButtonTestId(cameraId));
-  await act(() => userEvent.click(buyButton));
-};
-
-const clickModalCloseButton = clickTo(MODAL_CLOSE_BUTTON_ID);
 
 const clickProductButton = async (cameraId: Camera['id']) => {
   const buyButton = screen.getByTestId(makeInfoButtonTestId(cameraId));
@@ -65,43 +70,21 @@ const clickFilter = async (testId: string) => {
   await act(() => userEvent.click(element));
 };
 
-
 describe('Catalog page tests', () => {
   it('cameras from slice state is presented on screed', () => {
     const cameras = makeList(MAX_DISPLAYED_CAMERAS_COUNT, () => generateCamera());
 
-    renderSut({ cameras });
+    renderSut({ [CAMERAS_SLICE_NAME]: { cameras } });
 
     cameras.forEach((camera) => {
       expect(screen.queryByText(camera.name)).toBeInTheDocument();
     });
   });
 
-  it('modal have been opened on product card buy button click', async () => {
-    const camera = generateCamera();
-    renderSut({ cameras: [camera] });
-
-    await clickBuyButton(camera.id);
-
-    const modalElement = screen.getByTestId(makeCameraModalTestId(camera.id));
-    expect(modalElement).toBeInTheDocument();
-  });
-
-  it('modal have been closed on modal close button click', async () => {
-    const camera = generateCamera();
-    renderSut({ cameras: [camera] });
-
-    await clickBuyButton(camera.id);
-    await clickModalCloseButton();
-
-    const modalElement = screen.queryByTestId(makeCameraModalTestId(camera.id));
-    expect(modalElement).not.toBeInTheDocument();
-  });
-
   it('navigation to camera page on product card info button click', async () => {
     const camera = generateCamera();
     const history = createMemoryHistory();
-    renderSutWithHistory({ cameras: [camera] }, history);
+    renderSutWithHistory({ [CAMERAS_SLICE_NAME]: { cameras: [camera] } }, history);
 
     await clickProductButton(camera.id);
 

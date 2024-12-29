@@ -42,17 +42,11 @@ function InCartButton(): JSX.Element {
       </svg>
       В корзине
     </Link>
-
   );
 }
 
 function CameraListItem({ camera, onBuyButtonClick, inCart }: Props): JSX.Element {
   const { id, name, previewImg, previewImg2x, previewImgWebp, previewImgWebp2x, price, rating, reviewCount } = camera;
-
-  // const handleBuyButtonClick: MouseEventHandler<HTMLButtonElement> = (evt) => {
-  //   evt.preventDefault();
-  //   onBuyButtonClick(id);
-  // };
 
   return (
     <div className="product-card">

@@ -15,7 +15,6 @@ function ModalAddItemSuccess({ onContinueShoppingButtonClick, onGoToCartButtonCl
   const goToCartButtonRef = useRef(null);
   const [focusedRefIndex, setFocusedElementIndex] = useState(0);
 
-
   useEffect(
     () => {
       const handleEscapeKey = (event: KeyboardEvent) => {

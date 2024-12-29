@@ -1,13 +1,14 @@
+import { REQUEST_STATUS } from '../../const';
 import { generateCamera } from '../../test/test-data-generators';
 import { getIdsOf, makeList } from '../../test/utils';
-import slice, { OrderState, addCameraToCart, defaultState, removeCameraFromCart, setCamerasCount } from './order-slice';
+import slice, { OrderState, addCameraToCart, defaultState, removeCameraFromCart, resetOrderStatus, setCamerasCount } from './order-slice';
 
 const makeState = (overrides: Partial<OrderState> = {}): OrderState => ({
   ...defaultState,
   ...overrides
 });
 
-describe.only('Order slice reducer tests', () => {
+describe('Order slice reducer tests', () => {
   it('addCameraToCart reducer increments camerasCounts', () => {
     const state = makeState();
     const camera = generateCamera();
@@ -40,14 +41,24 @@ describe.only('Order slice reducer tests', () => {
     expect(newState.camerasCounts[id]).toBe(count);
   });
 
-  it('setCamerasCount reducer removes camera from state.cameras when new count is 0', () => {
+  it('setCamerasCount reducer set count to 1 when action contains value less than 1', () => {
     const camera = generateCamera();
     const state = makeState({ cameras: [camera] });
 
     const action = setCamerasCount({ id: camera.id, count: 0 });
     const newState = slice.reducer(state, action);
 
-    expect(newState.cameras).toEqual([]);
+    expect(newState.camerasCounts[camera.id]).toEqual(1);
+  });
+
+  it('setCamerasCount reducer set count to 9 when action contains value grater than 9', () => {
+    const camera = generateCamera();
+    const state = makeState({ cameras: [camera] });
+
+    const action = setCamerasCount({ id: camera.id, count: 10 });
+    const newState = slice.reducer(state, action);
+
+    expect(newState.camerasCounts[camera.id]).toEqual(9);
   });
 
   it('removeCameraFromCart reducer removes camera from state.cameras', () => {
@@ -71,5 +82,13 @@ describe.only('Order slice reducer tests', () => {
 
     expect(camerasIds.includes(subjectCamera.id)).toBe(false);
     expect(newState.camerasCounts[subjectCamera.id]).toBe(0);
+  });
+
+  it('resetOrderStatus reducer set orderRequestStatus to null', () => {
+    const state = makeState({ orderRequestStatus: REQUEST_STATUS.SUCCESS });
+
+    const newState = slice.reducer(state, resetOrderStatus());
+
+    expect(newState.orderRequestStatus).toEqual(null);
   });
 });

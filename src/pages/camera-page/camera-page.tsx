@@ -12,11 +12,13 @@ import {
   selectDisplayedReviewsNumber,
   selectDisplayedReviews,
   selectReviewsNumber,
-  increaseDisplayedReviewsNumber
+  increaseDisplayedReviewsNumber,
+  selectReviewRequestStatus,
+  resetReviewRequestStatus
 } from '../../store/reviews-slice.ts/reviews-slice';
 import { MouseEventHandler, useCallback, useEffect, useState } from 'react';
 import cn from 'classnames';
-import { AppRoute, PageRoute } from '../../const';
+import { AppRoute, PageRoute, REQUEST_STATUS } from '../../const';
 import Rating from '../../components/rating/rating';
 import CamerasSimilarList from '../../components/cameras-similar/cameras-similar-list';
 import { makeQueryParameter, scrollToTop, throttle } from '../../utils';
@@ -24,6 +26,8 @@ import { BACK_TO_TOP_BUTTON_ID, DESCRIPTION_SECTION_ID, DESCRIPTION_BUTTON_ID, P
 import ModalCartAdding from '../../components/modal-cart-adding/modal-cart-adding';
 import { addCameraToCart } from '../../store/order-slice.ts/order-slice';
 import ModalAddItemSuccess from '../../components/modal-add-item-success/modal-add-item-success';
+import ModalReview from '../../components/modal-review/modal-review';
+import ModalReviewSuccess from '../../components/modal-review-success/modal-review-success';
 
 type Props = Camera;
 
@@ -64,6 +68,9 @@ function CameraPage(camera: Props): JSX.Element {
   const navigate = useNavigate();
   const [isAddingToCartModalOpen, setIsAddingToCartModalOpen] = useState(false);
   const [isModalAddItemSuccessOpen, setIsModalAddItemSuccessOpen] = useState(false);
+  const [isModalAddReviewOpen, setIsModalAddReviewOpen] = useState(false);
+  const [isModalAddReviewSuccessOpen, setIsModalAddReviewSuccessOpen] = useState(false);
+  const reviewRequestStatus = useAppSelector(selectReviewRequestStatus);
 
   const setTabSearchParameter = useCallback((key: string, value: string) => {
     navigate(`${location.pathname}?${makeQueryParameter(key, value)}`);
@@ -103,26 +110,45 @@ function CameraPage(camera: Props): JSX.Element {
     scrollToTop();
   }, []);
 
+  useEffect(() => {
+    if (reviewRequestStatus === REQUEST_STATUS.SUCCESS) {
+      setIsModalAddReviewOpen(false);
+      setIsModalAddReviewSuccessOpen(true);
+      document.body.style.overflow = '';
+      dispatch(resetReviewRequestStatus());
+    }
+  }, [reviewRequestStatus, dispatch]);
+
   const handleBackToTopButton: MouseEventHandler<HTMLAnchorElement> = () => {
     scrollToTop('smooth');
   };
 
-  const openIsAddingToCartModal = () => {
+  const handleOpenIsAddingToCartModal = () => {
     setIsAddingToCartModalOpen(true);
     document.body.style.overflow = 'hidden';
   };
 
-  const closeModalCartAdding = () => {
+  const handleCloseModalCartAdding = () => {
     setIsAddingToCartModalOpen(false);
     document.body.style.overflow = '';
   };
 
-  const closeModalAddItemSuccess = () => {
+  const handleCloseModalAddItemSuccess = () => {
     document.body.style.overflow = '';
     setIsModalAddItemSuccessOpen(false);
   };
 
-  const addToCartButton = () => {
+  const handleCloseModalAddReviewSuccess = () => {
+    document.body.style.overflow = '';
+    setIsModalAddReviewSuccessOpen(false);
+  };
+
+  const handleCloseModalAddReview = () => {
+    setIsModalAddReviewOpen(false);
+    document.body.style.overflow = '';
+  };
+
+  const handleAddToCartButton = () => {
     if (camera) {
       dispatch(addCameraToCart(camera));
     }
@@ -135,14 +161,25 @@ function CameraPage(camera: Props): JSX.Element {
     document.body.style.overflow = '';
   };
 
+  const handleContinueShoppingReviewSuccessModalButtonClick = () => {
+    setIsModalAddReviewSuccessOpen(false);
+    document.body.style.overflow = '';
+    navigate(PageRoute.Cameras);
+  };
+
   const handleGoToCartButtonClick = () => {
     setIsModalAddItemSuccessOpen(false);
     document.body.style.overflow = '';
     navigate(PageRoute.Cart);
   };
 
+  const handleAddReviewButton = () => {
+    setIsModalAddReviewOpen(true);
+    document.body.style.overflow = 'hidden';
+  };
 
-  const makeSimilarList = () => similarCameras.length > 0 ? <CamerasSimilarList similar={similarCameras} onBuyButtonClick={openIsAddingToCartModal} /> : null;
+
+  const makeSimilarList = () => similarCameras.length > 0 ? <CamerasSimilarList similar={similarCameras} onBuyButtonClick={handleOpenIsAddingToCartModal} /> : null;
   const makeReviewList = () => reviews.length > 0 ? <ReviewsList reviews={reviews} /> : null;
   const makeShowMoreButton = () => !isAllReviewsDisplayed ? <ShowMoreButton /> : null;
 
@@ -184,7 +221,7 @@ function CameraPage(camera: Props): JSX.Element {
                   </p>
                   <button onClick={(evt) => {
                     evt.preventDefault();
-                    openIsAddingToCartModal();
+                    handleOpenIsAddingToCartModal();
                   }} className="btn btn--purple" type="button"
                   >
                     <svg width={24} height={16} aria-hidden="true">
@@ -257,6 +294,7 @@ function CameraPage(camera: Props): JSX.Element {
               <div className="container">
                 <div className="page-content__headed">
                   <h2 className="title title--h3">Отзывы</h2>
+                  <button onClick={handleAddReviewButton} className="btn" type="button">Оставить свой отзыв</button>
                 </div>
                 {makeReviewList()}
                 <div className="review-block__buttons">
@@ -268,15 +306,15 @@ function CameraPage(camera: Props): JSX.Element {
         </div>
         {isAddingToCartModalOpen ?
           <ModalCartAdding camera={camera}
-            onCloseButtonClick={closeModalCartAdding}
-            onAddButtonClick={addToCartButton}
+            onCloseButtonClick={handleCloseModalCartAdding}
+            onAddButtonClick={handleAddToCartButton}
           />
           : ''}
         {isModalAddItemSuccessOpen ?
           <ModalAddItemSuccess
             onContinueShoppingButtonClick={handleContinueShoppingButtonClick}
             onGoToCartButtonClick={handleGoToCartButtonClick}
-            onCloseButtonClick={closeModalAddItemSuccess}
+            onCloseButtonClick={handleCloseModalAddItemSuccess}
           />
           : null}
       </main>
@@ -289,6 +327,13 @@ function CameraPage(camera: Props): JSX.Element {
           <use xlinkHref="#icon-arrow2" />
         </svg>
       </Link>
+      {isModalAddReviewOpen ? <ModalReview onCloseButtonClick={handleCloseModalAddReview} cameraId={camera.id} /> : null}
+      {isModalAddReviewSuccessOpen ?
+        <
+          ModalReviewSuccess
+          onCloseButtonClick={handleCloseModalAddReviewSuccess}
+          onContinueShoppingButtonClick={handleContinueShoppingReviewSuccessModalButtonClick}
+        /> : null}
       <Footer />
     </div>
   );

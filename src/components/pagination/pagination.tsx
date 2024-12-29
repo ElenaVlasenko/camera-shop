@@ -72,7 +72,6 @@ function Pagination({ currentPage, totalPages, displayedPages, onPageClick, onNe
         {(displayedPageList.at(-1) ?? 0) === totalPages ? null : <PaginationButton onClick={onNextButtonClick} title='Далее' />}
       </ul>
     </div>
-
   );
 }
 

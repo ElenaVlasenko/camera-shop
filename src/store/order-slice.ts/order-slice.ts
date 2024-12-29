@@ -1,14 +1,18 @@
 import { buildCreateSlice, asyncThunkCreator } from '@reduxjs/toolkit';
 import { Camera, CameraCounts } from '../../types';
 import { OrderApi } from '../../api/order-api';
-import { ORDER_REQUEST_STATUS, OrderRequestStatus } from '../../const';
+import { BAD_REQUEST_ERROR_CODE, REQUEST_STATUS, RequestStatus } from '../../const';
 import { getIdsOf } from '../../test/utils';
+import { CouponApi } from '../../api/coupon-api';
 
 export type OrderState = {
   cameras: Camera[];
   camerasCounts: CameraCounts;
-  orderRequestStatus: null | OrderRequestStatus;
+  orderRequestStatus: null | RequestStatus;
+  couponRequestStatus: null | RequestStatus;
   errorMessage: null | string;
+  couponDiscount: number;
+  isCouponValid: boolean | null;
 }
 
 type Cart = Pick<OrderState, 'cameras' | 'camerasCounts'>;
@@ -21,7 +25,10 @@ export const defaultCart: Cart = {
 export const defaultState: OrderState = {
   ...defaultCart,
   orderRequestStatus: null,
-  errorMessage: null
+  couponRequestStatus: null,
+  errorMessage: null,
+  couponDiscount: 0,
+  isCouponValid: null
 };
 
 const createSliceWithThunks = buildCreateSlice({
@@ -53,9 +60,12 @@ export const makeOrderSlice = (initialState = getInitialState()) => createSliceW
     selectCameras: (state) => state.cameras,
     selectCamerasCounts: (state) => state.camerasCounts,
     selectOrderRequestStatus: (state) => state.orderRequestStatus,
+    selectCouponRequestStatus: (state) => state.couponRequestStatus,
+    selectIsCouponValid: (state) => state.isCouponValid,
+    selectCouponDiscount: (state) => state.couponDiscount
   },
   reducers: (create) => ({
-    addOrderAction: create.asyncThunk<void, { coupon: string | null }, { extra: { orderApi: OrderApi } }>(
+    addOrder: create.asyncThunk<void, { coupon: string | null }, { extra: { orderApi: OrderApi } }>(
       ({ coupon }, { extra: { orderApi }, getState }) => {
         const state = (getState() as { [ORDER_SLICE_NAME]: OrderState })[ORDER_SLICE_NAME];
 
@@ -67,16 +77,40 @@ export const makeOrderSlice = (initialState = getInitialState()) => createSliceW
       },
       {
         pending: (state) => {
-          state.orderRequestStatus = ORDER_REQUEST_STATUS.IN_PROGRESS;
+          state.orderRequestStatus = REQUEST_STATUS.IN_PROGRESS;
         },
         rejected: (state) => {
-          state.orderRequestStatus = ORDER_REQUEST_STATUS.FAILED;
+          state.orderRequestStatus = REQUEST_STATUS.FAILED;
         },
         fulfilled: (state) => {
-          state.orderRequestStatus = ORDER_REQUEST_STATUS.SUCCESS;
+          state.orderRequestStatus = REQUEST_STATUS.SUCCESS;
           state.cameras = [];
           state.camerasCounts = {};
           localStorage.removeItem(LOCAL_STORAGE_KEY);
+          state.isCouponValid = null;
+          state.couponRequestStatus = null;
+        },
+      }
+    ),
+
+    checkCoupon: create.asyncThunk<number, string, { extra: { couponApi: CouponApi } }>(
+      (coupon, { extra: { couponApi } }) => couponApi.check(coupon),
+      {
+        pending: (state) => {
+          state.couponRequestStatus = REQUEST_STATUS.IN_PROGRESS;
+          state.couponDiscount = 0;
+        },
+        rejected: (state, action) => {
+          state.couponRequestStatus = REQUEST_STATUS.FAILED;
+
+          if (BAD_REQUEST_ERROR_CODE === action.error.code) {
+            state.isCouponValid = false;
+          }
+        },
+        fulfilled: (state, action) => {
+          state.couponRequestStatus = REQUEST_STATUS.SUCCESS;
+          state.couponDiscount = action.payload;
+          state.isCouponValid = true;
         },
       }
     ),
@@ -118,16 +152,20 @@ const orderSlice = makeOrderSlice();
 export default orderSlice;
 
 export const {
-  addOrderAction,
+  addOrder,
   addCameraToCart,
   setCamerasCount,
   removeCameraFromCart,
-  resetOrderStatus
+  resetOrderStatus,
+  checkCoupon
 } = orderSlice.actions;
 
 export const {
   selectCameras,
   selectCamerasCounts,
-  selectOrderRequestStatus
+  selectOrderRequestStatus,
+  selectCouponDiscount,
+  selectCouponRequestStatus,
+  selectIsCouponValid
 } = orderSlice.selectors;
 

@@ -130,7 +130,6 @@ function CatalogList({ onBuyButtonClick, cartCameraIds }: Props): JSX.Element {
                 onNextButtonClick={handleNextButtonClick}
                 onPrevButtonClick={handlePrevButtonClick}
               />}
-
           </div>
         </div>
       </div>

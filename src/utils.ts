@@ -1,4 +1,4 @@
-import { Camera, CameraCounts } from './types';
+import { Camera } from './types';
 
 export const hasId = (id?: Camera['id']) => (camera: Camera) => id === camera.id;
 export const isEmpty = <T>(list: T[]) => list.length === 0;
@@ -82,38 +82,49 @@ export const makeQueryParameter = (key: string, ...values: string[]): string => 
   return params.toString();
 };
 
+const COUNT_DISCOUNT_LEVEL_1 = 2;
+const COUNT_DISCOUNT_LEVEL_2 = 3;
+const COUNT_DISCOUNT_LEVEL_3 = 6;
+const COUNT_DISCOUNT_LEVEL_4 = 10;
 
-export const getDiscount = (orderPrice: number, counts: CameraCounts) => {
-  let totalDiscount = 0;
-  const totalProductCount = Object.values(counts).reduce((a, b) => a + b, 0);
+const levelDiscount = {
+  [COUNT_DISCOUNT_LEVEL_4]: 15,
+  [COUNT_DISCOUNT_LEVEL_3]: 10,
+  [COUNT_DISCOUNT_LEVEL_2]: 5,
+  [COUNT_DISCOUNT_LEVEL_1]: 3
+} as const;
 
-  if (totalProductCount >= 2) {
-    totalDiscount = 3;
+
+export const getDiscountByCount = (totalProductCount: number) => {
+  switch (true) {
+    case totalProductCount > COUNT_DISCOUNT_LEVEL_4: return levelDiscount[COUNT_DISCOUNT_LEVEL_4];
+    case totalProductCount >= COUNT_DISCOUNT_LEVEL_3: return levelDiscount[COUNT_DISCOUNT_LEVEL_3];
+    case totalProductCount >= COUNT_DISCOUNT_LEVEL_2: return levelDiscount[COUNT_DISCOUNT_LEVEL_2];
+    case totalProductCount >= COUNT_DISCOUNT_LEVEL_1: return levelDiscount[COUNT_DISCOUNT_LEVEL_1];
+    default: return 0;
   }
+};
 
-  if (totalProductCount >= 3) {
-    totalDiscount = 5;
+const PRICE_DISCOUNT_DECREASE_LEVEL_1 = 10000;
+const PRICE_DISCOUNT_DECREASE_LEVEL_2 = 20000;
+const PRICE_DISCOUNT_DECREASE_LEVEL_3 = 30000;
+
+const discountDecrease = {
+  [PRICE_DISCOUNT_DECREASE_LEVEL_3]: 3,
+  [PRICE_DISCOUNT_DECREASE_LEVEL_2]: 2,
+  [PRICE_DISCOUNT_DECREASE_LEVEL_1]: 1
+} as const;
+
+const decreaseDiscountByPrice = (discount: number, price: number) => {
+  switch (true) {
+    case price > PRICE_DISCOUNT_DECREASE_LEVEL_3: return Math.max(discount - discountDecrease[PRICE_DISCOUNT_DECREASE_LEVEL_3], 0);
+    case price > PRICE_DISCOUNT_DECREASE_LEVEL_2: return Math.max(discount - discountDecrease[PRICE_DISCOUNT_DECREASE_LEVEL_2], 0);
+    case price > PRICE_DISCOUNT_DECREASE_LEVEL_1: return Math.max(discount - discountDecrease[PRICE_DISCOUNT_DECREASE_LEVEL_1], 0);
+    default: return discount;
   }
+};
 
-  if (totalProductCount >= 6) {
-    totalDiscount = 10;
-  }
-
-  if (totalProductCount > 10) {
-    totalDiscount = 15;
-  }
-
-  if (orderPrice >= 10000 && orderPrice <= 20000) {
-    totalDiscount = totalDiscount - 1;
-  }
-
-  if (orderPrice > 20000 && orderPrice <= 30000) {
-    totalDiscount = totalDiscount - 2;
-  }
-
-  if (orderPrice > 30000) {
-    totalDiscount = totalDiscount - 3;
-  }
-
-  return totalDiscount;
+export const getDiscount = (orderPrice: number, totalProductCount: number) => {
+  const discountByCount = getDiscountByCount(totalProductCount);
+  return decreaseDiscountByPrice(discountByCount, orderPrice);
 };

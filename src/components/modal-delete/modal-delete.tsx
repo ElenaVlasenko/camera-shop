@@ -68,7 +68,7 @@ function ModalCartDelete({ camera, onDeleteButtonClick, onCloseButtonClick, onCo
   return (
     <div className="modal is-active">
       <div className="modal__wrapper">
-        <div className="modal__overlay" />
+        <div className="modal__overlay" onClick={onCloseButtonClick} />
         <div className="modal__content">
           <p className="title title--h4">Удалить этот товар?</p>
           <div className="basket-item basket-item--short">
@@ -125,8 +125,6 @@ function ModalCartDelete({ camera, onDeleteButtonClick, onCloseButtonClick, onCo
         </div>
       </div>
     </div>
-
-
   );
 }
 

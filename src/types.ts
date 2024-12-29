@@ -43,3 +43,12 @@ export type Promo = {
 }
 
 export type CameraCounts = { [cameraId: number]: number };
+
+export type ReviewParams = {
+  cameraId: number;
+  userName: string;
+  advantage: string;
+  disadvantage: string;
+  review: string;
+  rating: number;
+}

@@ -16,16 +16,18 @@ import { SIMILAR_PRODUCTS_SECTION_ID } from '../../components/cameras-similar/ut
 import { REVIEW_CARD_CLASS_NAME, REVIEWS_SECTION_TEST_ID } from '../../components/reviews-list/utils';
 import { SHOW_MORE_REVIEW_BUTTON_ID } from '../../components/show-more-button/utils';
 import { DISPLAYED_REVIEWS_NUMBER_STEP } from '../../const';
+import { makeOrderSlice, ORDER_SLICE_NAME, OrderState } from '../../store/order-slice.ts/order-slice';
 
 type Fakes = { camerasApi?: Partial<CamerasApi>; reviewsApi?: Partial<ReviewsApi> };
 
 type SliceStates = {
-  cameras?: Partial<CamerasState>;
-  reviews?: Partial<ReviewsState>;
+  [CAMERAS_SLICE_NAME]?: Partial<CamerasState>;
+  [REVIEWS_SLICE_NAME]?: Partial<ReviewsState>;
+  [ORDER_SLICE_NAME]?: Partial<OrderState>;
 }
 
 const createPageStore = (
-  slices: Partial<Pick<typeof reducer, typeof CAMERAS_SLICE_NAME | typeof REVIEWS_SLICE_NAME>>,
+  slices: Partial<Pick<typeof reducer, typeof CAMERAS_SLICE_NAME | typeof REVIEWS_SLICE_NAME | typeof ORDER_SLICE_NAME>>,
   fakes: Fakes = {},
   middleware?: Middleware
 ) => createTestStore(slices, fakes, middleware);
@@ -37,6 +39,7 @@ const createSut = ({ cameras, reviews }: SliceStates) => withRouter(withStore(
   createPageStore({
     [CAMERAS_SLICE_NAME]: makeCamerasSlice({ ...defaultCamerasState, ...cameras }).reducer,
     [REVIEWS_SLICE_NAME]: makeReviewsSlice({ ...defaultReviewsState, ...reviews }).reducer,
+    [ORDER_SLICE_NAME]: makeOrderSlice().reducer,
   })
 ));
 

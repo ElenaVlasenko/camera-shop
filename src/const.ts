@@ -67,10 +67,12 @@ export type Level = typeof LEVEL[keyof typeof LEVEL];
 export const MAX_DISPLAYED_CAMERAS_COUNT = 9;
 export const PAGINATION_PAGE_NUMBER = 3;
 
-export const ORDER_REQUEST_STATUS = {
+export const REQUEST_STATUS = {
   IN_PROGRESS: 'in-progress',
   SUCCESS: 'success',
   FAILED: 'failed',
 } as const;
 
-export type OrderRequestStatus = typeof ORDER_REQUEST_STATUS[keyof typeof ORDER_REQUEST_STATUS];
+export type RequestStatus = typeof REQUEST_STATUS[keyof typeof REQUEST_STATUS];
+
+export const BAD_REQUEST_ERROR_CODE = 'ERR_BAD_REQUEST';

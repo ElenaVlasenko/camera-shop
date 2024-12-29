@@ -6,11 +6,13 @@ import { reviewsApi } from '../api/reviews-api';
 import { orderApi } from '../api/order-api';
 import orderSlice, { ORDER_SLICE_NAME } from './order-slice.ts/order-slice';
 import errorSlice, { ERROR_SLICE_NAME } from './error-slice/error-slice';
+import { couponApi } from '../api/coupon-api';
 
 export const extraArgument = {
   camerasApi,
   reviewsApi,
   orderApi,
+  couponApi
 };
 
 export const reducer = {
