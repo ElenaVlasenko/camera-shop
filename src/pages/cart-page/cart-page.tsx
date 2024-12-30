@@ -25,6 +25,7 @@ import PromoCode from '../../components/promoCode/promoCode';
 import BlockUI from '../../components/block-ui/block-ui';
 import { selectPromo } from '../../store/cameras-slice/cameras-slice';
 import { getIdsOf } from '../../test/utils';
+import cn from 'classnames';
 
 function CartPage(): JSX.Element {
   const cameras = useAppSelector(selectCameras);
@@ -121,7 +122,7 @@ function CartPage(): JSX.Element {
                   </p>
                   <p className="basket__summary-item">
                     <span className="basket__summary-text">Скидка:</span>
-                    <span className="basket__summary-value basket__summary-value--bonus">
+                    <span className={cn('basket__summary-value', { 'basket__summary-value--bonus': discount > 0 })}>
                       {discount.toLocaleString('ru')} ₽
                     </span>
                   </p>
