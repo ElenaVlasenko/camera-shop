@@ -1,4 +1,4 @@
-import { FormEventHandler, useEffect, useRef, useState } from 'react';
+import { ChangeEventHandler, useEffect, useRef, useState } from 'react';
 import { Camera, ReviewParams } from '../../types';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { addReviewAction, selectReviewRequestStatus } from '../../store/reviews-slice.ts/reviews-slice';
@@ -34,6 +34,12 @@ function ModalReview({ onCloseButtonClick, cameraId }: Props): JSX.Element | nul
   const closeButtonRef = useRef(null);
   const sendButtonRef = useRef(null);
   const [focusedRefIndex, setFocusedElementIndex] = useState(0);
+  const [rating, setRating] = useState(NaN);
+
+  const handleRatingInputChange: ChangeEventHandler<HTMLInputElement> = (evt) => {
+    evt.preventDefault();
+    setRating(parseInt(evt.target.value, 10));
+  };
 
   const {
     register,
@@ -60,21 +66,6 @@ function ModalReview({ onCloseButtonClick, cameraId }: Props): JSX.Element | nul
     },
     [onCloseButtonClick, setFocus]
   );
-
-  const ratingProps = register(
-    'rating',
-    {
-      valueAsNumber: true,
-      required: 'Нужно оценить товар',
-      min: {
-        value: 1,
-        message: 'Минимальный рейтинг: 1',
-      },
-      max: {
-        value: 5,
-        message: 'Максимальный рейтинг: 5',
-      },
-    });
 
   useEffect(() => {
     const focusItems: ({ current: HTMLElement | null } | keyof Inputs)[] = [...focusInputs, sendButtonRef, closeButtonRef];
@@ -105,8 +96,10 @@ function ModalReview({ onCloseButtonClick, cameraId }: Props): JSX.Element | nul
     };
   }, [setFocusedElementIndex, focusedRefIndex, closeButtonRef, setFocus]);
 
-  const onSubmit: SubmitHandler<Inputs> = ({ rating, ...data }) => {
-    dispatch(addReviewAction({ ...data, rating: parseInt(rating, 10), cameraId }));
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    if (rating > 0) {
+      dispatch(addReviewAction({ ...data, rating, cameraId }));
+    }
   };
 
   function RatingItem({ value, title }: Rating) {
@@ -120,8 +113,9 @@ function ModalReview({ onCloseButtonClick, cameraId }: Props): JSX.Element | nul
           className="visually-hidden"
           id={`star-${value}`}
           type="radio"
-          defaultValue={value}
-          {...ratingProps}
+          value={value}
+          checked={value === rating}
+          onChange={handleRatingInputChange}
         />
         <label
           key={labelKey}
@@ -133,7 +127,7 @@ function ModalReview({ onCloseButtonClick, cameraId }: Props): JSX.Element | nul
     );
   }
 
-  const makeRatingItem = (rating: Rating) => <RatingItem key={rating.value} {...rating} />;
+  const makeRatingItem = (params: Rating) => <RatingItem key={params.value} {...params} />;
 
   return (
     <>
@@ -144,9 +138,15 @@ function ModalReview({ onCloseButtonClick, cameraId }: Props): JSX.Element | nul
           <div className="modal__content">
             <p className="title title--h4">Оставить отзыв</p>
             <div className="form-review">
-              <form onSubmit={handleSubmit(onSubmit) as FormEventHandler}>
+              <form onSubmit={(evt) => {
+                if (Number.isNaN(rating)) {
+                  setRating(0);
+                }
+                handleSubmit(onSubmit)(evt);
+              }}
+              >
                 <div className="form-review__rate">
-                  <fieldset className={cn('rate', 'form-review__item', { 'is-invalid': 'rating' in errors })}>
+                  <fieldset className={cn('rate', 'form-review__item', { 'is-invalid': rating === 0 })}>
                     <legend className="rate__caption">
                       Рейтинг
                       <svg width={9} height={9} aria-hidden="true">
@@ -154,7 +154,7 @@ function ModalReview({ onCloseButtonClick, cameraId }: Props): JSX.Element | nul
                       </svg>
                     </legend>
                     <div className="rate__bar">
-                      <div className="rate__group">
+                      <div className="rate__group" >
                         {ratings.map(makeRatingItem)}
                       </div>
                       <div className="rate__progress">
@@ -162,7 +162,7 @@ function ModalReview({ onCloseButtonClick, cameraId }: Props): JSX.Element | nul
                         <span className="rate__all-stars">5</span>
                       </div>
                     </div>
-                    <p className="rate__message">{errors.rating?.message}</p>
+                    <p className="rate__message">{'Нужно оценить товар'}</p>
                   </fieldset>
                   <div className={cn('custom-input', 'form-review__item', { 'is-invalid': 'userName' in errors })}>
                     <label>
