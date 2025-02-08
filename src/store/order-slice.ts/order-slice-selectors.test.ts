@@ -1,6 +1,6 @@
 import { generateCamera } from '../../test/test-data-generators';
 import { makeList } from '../../test/utils';
-import { defaultState, OrderState, selectCameras, selectCamerasCounts } from './order-slice';
+import { defaultState, OrderState, selectCartCameras, selectCamerasCounts } from './order-slice';
 
 
 describe.only('Order slice selectors tests', () => {
@@ -8,7 +8,7 @@ describe.only('Order slice selectors tests', () => {
     const cameras = makeList(3, () => generateCamera());
     const state: OrderState = { ...defaultState, cameras };
 
-    expect(selectCameras.unwrapped(state)).toEqual(cameras);
+    expect(selectCartCameras.unwrapped(state)).toEqual(cameras);
   });
 
   it('selectCamerasCounts returns state.cameras', () => {

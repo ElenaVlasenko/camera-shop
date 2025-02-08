@@ -57,7 +57,7 @@ export const makeOrderSlice = (initialState = getInitialState()) => createSliceW
   name: ORDER_SLICE_NAME,
   initialState,
   selectors: {
-    selectCameras: (state) => state.cameras,
+    selectCartCameras: (state) => state.cameras,
     selectCamerasCounts: (state) => state.camerasCounts,
     selectOrderRequestStatus: (state) => state.orderRequestStatus,
     selectCouponRequestStatus: (state) => state.couponRequestStatus,
@@ -161,7 +161,7 @@ export const {
 } = orderSlice.actions;
 
 export const {
-  selectCameras,
+  selectCartCameras,
   selectCamerasCounts,
   selectOrderRequestStatus,
   selectCouponDiscount,

@@ -11,7 +11,7 @@ import {
   checkCoupon,
   removeCameraFromCart,
   resetOrderStatus,
-  selectCameras,
+  selectCartCameras,
   selectCamerasCounts,
   selectCouponDiscount,
   selectCouponRequestStatus,
@@ -28,7 +28,7 @@ import { getIdsOf } from '../../test/utils';
 import cn from 'classnames';
 
 function CartPage(): JSX.Element {
-  const cameras = useAppSelector(selectCameras);
+  const cameras = useAppSelector(selectCartCameras);
   const promo = useAppSelector(selectPromo);
   const promoIds = getIdsOf(promo);
   const navigate = useNavigate();
