@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Camera } from '../../types';
 import { KEYCODE_TAB } from '../../const';
 import { Link } from 'react-router-dom';
+import { useHiddenOverflow } from '../../hooks/hooks';
 
 type Props = {
   camera: Camera;
@@ -16,6 +17,8 @@ function ModalCartDelete({ camera, onDeleteButtonClick, onCloseButtonClick, onCo
   const deleteButtonRef = useRef(null);
   const continueShoppingButtonRef = useRef(null);
   const [focusedRefIndex, setFocusedElementIndex] = useState(0);
+
+  useHiddenOverflow();
 
   useEffect(
     () => {

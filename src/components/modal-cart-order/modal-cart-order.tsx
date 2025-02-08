@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { KEYCODE_TAB, REQUEST_STATUS, RequestStatus } from '../../const';
+import { useHiddenOverflow } from '../../hooks/hooks';
 
 type Props = {
   onCloseButtonClick: () => void;
@@ -29,6 +30,8 @@ function ModalCartOrder({ onCloseButtonClick, onContinueShoppingButtonClick, ord
     },
     [onCloseButtonClick]
   );
+
+  useHiddenOverflow();
 
   useEffect(() => {
     const focusRefs: { current: HTMLElement | null }[] = [continueShoppingButtonRef, closeButtonRef];

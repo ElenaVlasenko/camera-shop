@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { KEYCODE_TAB } from '../../const';
+import { useHiddenOverflow } from '../../hooks/hooks';
 
 type Props = {
   onCloseButtonClick: () => void;
@@ -10,6 +11,8 @@ function ModalReviewSuccess({ onCloseButtonClick, onContinueShoppingButtonClick 
   const closeButtonRef = useRef(null);
   const continueShoppingButtonRef = useRef(null);
   const [focusedRefIndex, setFocusedElementIndex] = useState(0);
+
+  useHiddenOverflow();
 
   useEffect(
     () => {

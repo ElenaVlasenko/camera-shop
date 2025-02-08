@@ -2,7 +2,7 @@ import { ChangeEventHandler, useEffect, useRef, useState } from 'react';
 import { Camera, ReviewParams } from '../../types';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { addReviewAction, selectReviewRequestStatus } from '../../store/reviews-slice.ts/reviews-slice';
-import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
+import { useAppDispatch, useAppSelector, useHiddenOverflow } from '../../hooks/hooks';
 import { KEYCODE_TAB, REQUEST_STATUS } from '../../const';
 import BlockUI from '../block-ui/block-ui';
 import cn from 'classnames';
@@ -47,6 +47,8 @@ function ModalReview({ onCloseButtonClick, cameraId }: Props): JSX.Element | nul
     formState: { errors },
     setFocus
   } = useForm<Inputs>();
+
+  useHiddenOverflow();
 
   useEffect(
     () => {

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Camera } from '../../types';
 import { KEYCODE_TAB } from '../../const';
+import { useHiddenOverflow } from '../../hooks/hooks';
 
 type Props = {
   camera: Camera;
@@ -30,6 +31,8 @@ function ModalCartAdding({ camera, onCloseButtonClick, onAddButtonClick }: Props
     },
     [onCloseButtonClick]
   );
+
+  useHiddenOverflow();
 
   useEffect(() => {
     const focusRefs: { current: HTMLElement | null }[] = [addButtonRef, closeButtonRef];

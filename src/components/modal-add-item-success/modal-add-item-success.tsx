@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { KEYCODE_TAB, PageRoute } from '../../const';
 import { useEffect, useRef, useState } from 'react';
+import { useHiddenOverflow } from '../../hooks/hooks';
 
 type Props = {
   onContinueShoppingButtonClick: () => void;
@@ -31,6 +32,8 @@ function ModalAddItemSuccess({ onContinueShoppingButtonClick, onGoToCartButtonCl
     },
     [onCloseButtonClick]
   );
+
+  useHiddenOverflow();
 
   useEffect(() => {
     const focusRefs: { current: HTMLElement | null }[] = [continueShoppingButtonRef, goToCartButtonRef, closeButtonRef];

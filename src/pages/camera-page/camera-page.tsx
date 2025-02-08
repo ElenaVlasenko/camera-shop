@@ -125,27 +125,22 @@ function CameraPage(camera: Props): JSX.Element {
 
   const handleOpenIsAddingToCartModal = () => {
     setIsAddingToCartModalOpen(true);
-    document.body.style.overflow = 'hidden';
   };
 
   const handleCloseModalCartAdding = () => {
     setIsAddingToCartModalOpen(false);
-    document.body.style.overflow = '';
   };
 
   const handleCloseModalAddItemSuccess = () => {
-    document.body.style.overflow = '';
     setIsModalAddItemSuccessOpen(false);
   };
 
   const handleCloseModalAddReviewSuccess = () => {
-    document.body.style.overflow = '';
     setIsModalAddReviewSuccessOpen(false);
   };
 
   const handleCloseModalAddReview = () => {
     setIsModalAddReviewOpen(false);
-    document.body.style.overflow = '';
   };
 
   const handleAddToCartButton = () => {
@@ -158,24 +153,20 @@ function CameraPage(camera: Props): JSX.Element {
 
   const handleContinueShoppingButtonClick = () => {
     setIsModalAddItemSuccessOpen(false);
-    document.body.style.overflow = '';
   };
 
   const handleContinueShoppingReviewSuccessModalButtonClick = () => {
     setIsModalAddReviewSuccessOpen(false);
-    document.body.style.overflow = '';
     navigate(PageRoute.Cameras);
   };
 
   const handleGoToCartButtonClick = () => {
     setIsModalAddItemSuccessOpen(false);
-    document.body.style.overflow = '';
     navigate(PageRoute.Cart);
   };
 
   const handleAddReviewButton = () => {
     setIsModalAddReviewOpen(true);
-    document.body.style.overflow = 'hidden';
   };
 
 
