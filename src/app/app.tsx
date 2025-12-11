@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route, HashRouter } from 'react-router-dom';
 import MainPagePicker from '../pages/main-page/main-page-picker';
 import { PageRoute } from '../const';
 import CameraPagePicker from '../pages/camera-page/camera-page-picker';
@@ -20,11 +20,11 @@ function App(): JSX.Element {
   }
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         {getInitializedAppRoutes()}
       </Routes>
-    </BrowserRouter >
+    </HashRouter >
   );
 }
 
