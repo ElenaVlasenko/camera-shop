@@ -18,7 +18,8 @@ function Footer(): JSX.Element {
           <p className="footer__description">
             Интернет-магазин фото- и видеотехники
           </p>
-          <ul className="social">
+          {/*to do when it will be required*/}
+          {/* <ul className="social">
             <li className="social__item">
               <Link
                 className="link"
@@ -52,9 +53,9 @@ function Footer(): JSX.Element {
                 </svg>
               </Link>
             </li>
-          </ul>
+          </ul> */}
         </div>
-        <ul className="footer__nav">
+        {/* <ul className="footer__nav">
           <li className="footer__nav-item">
             <p className="footer__title">Навигация</p>
             <ul className="footer__list">
@@ -115,7 +116,7 @@ function Footer(): JSX.Element {
               </li>
             </ul>
           </li>
-        </ul>
+        </ul> */}
       </div>
     </footer>
   );

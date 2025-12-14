@@ -21,7 +21,8 @@ function Header(): JSX.Element {
             <use xlinkHref="#icon-logo" />
           </svg>
         </Link>
-        <nav className="main-nav header__main-nav">
+        {/*to do when it will be required*/}
+        {/* <nav className="main-nav header__main-nav">
           <ul className="main-nav__list">
             <li className="main-nav__item">
               <Link className="main-nav__link" to={AppRoute.Cameras}>
@@ -44,7 +45,7 @@ function Header(): JSX.Element {
               </Link>
             </li>
           </ul>
-        </nav>
+        </nav> */}
         <SearchForm />
         {cartCount === 0 ? '' :
           <CartIcon cartCount={cartCount} />}
