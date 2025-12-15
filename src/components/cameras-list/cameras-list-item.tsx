@@ -54,11 +54,11 @@ function CameraListItem({ camera, onBuyButtonClick, inCart }: Props): JSX.Elemen
         <picture>
           <source
             type="image/webp"
-            srcSet={`/${previewImgWebp}, /${previewImgWebp2x} 2x`}
+            srcSet={`${import.meta.env.BASE_URL}${previewImgWebp}, ${import.meta.env.BASE_URL}${previewImgWebp2x} 2x`}
           />
           <img
-            src={`/${previewImg}`}
-            srcSet={`/${previewImg2x} 2x`}
+            src={`${import.meta.env.BASE_URL}${previewImg}`}
+            srcSet={`${import.meta.env.BASE_URL}${previewImg2x} 2x`}
             width={280}
             height={240}
             alt={name}
