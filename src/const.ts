@@ -1,16 +1,16 @@
-export enum AppRoute {
-  Main = '/',
-  Cameras = '/cameras',
-  Id = ':id',
-  Cart = '/cart'
-}
+export const AppRoute = {
+  Main: `${import.meta.env.BASE_URL}`,
+  Cameras: `${import.meta.env.BASE_URL}cameras`,
+  Id: ':id',
+  Cart: `${import.meta.env.BASE_URL}cart`
+} as const;
 
-export enum PageRoute {
-  Main = AppRoute.Main,
-  Cameras = AppRoute.Cameras,
-  Camera = `${AppRoute.Cameras}/${AppRoute.Id}`,
-  Cart = AppRoute.Cart,
-}
+export const PageRoute = {
+  Main: AppRoute.Main,
+  Cameras: AppRoute.Cameras,
+  Camera: `${AppRoute.Cameras}/${AppRoute.Id}`,
+  Cart: AppRoute.Cart,
+} as const;
 
 export enum ServerRoute {
   Cameras = '/cameras',

@@ -179,7 +179,7 @@ function CameraPage(camera: Props): JSX.Element {
       <Header />
       <main>
         <div className="page-content">
-          <Navigation menuPath={[{ name: 'Главная', to: '/' }, { name: 'Каталог', to: AppRoute.Main }]} currentItem={name} />
+          <Navigation menuPath={[{ name: 'Главная', to: AppRoute.Main }, { name: 'Каталог', to: AppRoute.Main }]} currentItem={name} />
           <div className="page-content__section">
             <section className="product">
               <div className="container">
