@@ -72,11 +72,11 @@ function CartListItem({ camera, count, onItemDeleteClick }: Props): JSX.Element 
           <picture>
             <source
               type="image/webp"
-              srcSet={`/${previewImgWebp}, /${previewImgWebp2x} 2x`}
+              srcSet={`${import.meta.env.BASE_URL}${previewImgWebp}, ${import.meta.env.BASE_URL}${previewImgWebp2x} 2x`}
             />
             <img
-              src={`/${previewImg}`}
-              srcSet={`/${previewImg2x} 2x`}
+              src={`${import.meta.env.BASE_URL}${previewImg}`}
+              srcSet={`${import.meta.env.BASE_URL}${previewImg2x} 2x`}
               width={140}
               height={120}
               alt={name}
