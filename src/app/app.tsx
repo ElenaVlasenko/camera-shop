@@ -5,7 +5,6 @@ import CameraPagePicker from '../pages/camera-page/camera-page-picker';
 import NotFoundPage from '../pages/not-found-page/not-found-page';
 import CartPage from '../pages/cart-page/cart-page';
 import CatalogPagePresenter from '../pages/catalog-page/catalog-page-presenter';
-
 function App(): JSX.Element {
   function getInitializedAppRoutes() {
     return (

@@ -33,6 +33,7 @@ const handleNewCountWithTimeout = debounce(handleNewCount, NEW_COUNT_SETTING_TIM
 
 function CartListItem({ camera, count, onItemDeleteClick }: Props): JSX.Element {
   const { category, previewImg, previewImg2x, previewImgWebp, previewImgWebp2x, name, vendorCode, type, level, price, id } = camera;
+
   const dispatch = useAppDispatch();
   const [camerasCountInput, setCamerasCountInput] = useState<number | string>(1);
 
@@ -71,11 +72,11 @@ function CartListItem({ camera, count, onItemDeleteClick }: Props): JSX.Element 
           <picture>
             <source
               type="image/webp"
-              srcSet={`../../../public/${previewImgWebp}, ../../../public/${previewImgWebp2x} 2x`}
+              srcSet={`/${previewImgWebp}, /${previewImgWebp2x} 2x`}
             />
             <img
-              src={`../../../public/${previewImg}`}
-              srcSet={`../../../public/${previewImg2x} 2x`}
+              src={`/${previewImg}`}
+              srcSet={`/${previewImg2x} 2x`}
               width={140}
               height={120}
               alt={name}
