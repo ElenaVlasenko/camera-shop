@@ -187,11 +187,11 @@ function CameraPage(camera: Props): JSX.Element {
                   <picture>
                     <source
                       type="image/webp"
-                      srcSet={`../../../public/${previewImgWebp}, ../../../public/${previewImgWebp2x} 2x`}
+                      srcSet={`${import.meta.env.BASE_URL}${previewImgWebp}, ${import.meta.env.BASE_URL}${previewImgWebp2x} 2x`}
                     />
                     <img
-                      src={`../../../public/${previewImg}`}
-                      srcSet={`../../../public/${previewImg2x} 2x`}
+                      src={`${import.meta.env.BASE_URL}${previewImg}`}
+                      srcSet={`${import.meta.env.BASE_URL}${previewImg2x} 2x`}
                       width={560}
                       height={480}
                       alt={name}
